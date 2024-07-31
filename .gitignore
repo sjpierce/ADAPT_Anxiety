@@ -32,6 +32,7 @@ scripts/.quarto/
 # we use to automate creation of the `data` folder and its subfolders.
 data/*.Rdata
 data/*.Rds
+scripts/extdata/*.sav
 
 # Omit HTML and PDF output plus log files created by rendering scripts.
 *.pdf
