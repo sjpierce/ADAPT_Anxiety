@@ -1,0 +1,122 @@
+---
+title: "ADAPT Treatment Effect on Anxiety Diagnosis"
+subtitle: "Client: Lucy Nguyen. CSTAT Case: C1593"
+author: 
+  - name: Steven J. Pierce
+    orcid: 0000-0002-0679-3019
+    email: pierces1@msu.edu
+    affiliations: 
+      - name: Michigan State University, Center for Statistical Training and Consulting
+params:
+  SourceDir: "scripts/"
+  SourceFile: "Anxiety_Dx_Analysis.qmd"
+  LogFile: "Anxiety_Dx_Analysis_Draft.html"
+date: now
+date-modified: last-modified
+date-format: YYYY-MM-DD HH:mm:ss z
+format: 
+  html:
+    output-file: "Anxiety_Dx_Analysis_Draft.html"
+    toc: true
+    toc-depth: 3
+    toc-location: left
+    number-sections: true
+    number-depth: 3
+    code-fold: true
+    code-tools: true
+    code-line-numbers: false
+    embed-resources: true 
+    anchor-sections: true
+    theme: default
+execute: 
+  eval: true 
+  echo: fenced 
+  output: true 
+  message: true 
+  warning: true 
+  error: true 
+  include: true 
+---
+
+# Overview
+This file contains results of statistical analyses performed by a 
+[CSTAT](https://cstat.msu.edu) statistician for a project called 
+*Effects of How Mental Health Diagnosis in Pediatric Patients with Functional Abdominal Pain Disorders Respond to Cognitive Behavioral Therapy Specifically for Anxiety Symptoms*, 
+which was tracked by CSTAT as Case C1593. The original data come from one of 
+Dr. Natoshia Cunningham's grants. Lucy is one of Dr. Cunningham's students. The
+study was a randomized controlled trial of a tailored cognitive behavioral
+therapy (CBT) treatment for functional abdominal pain in pediatric patients that
+was called ADAPT. The control group received treatment as usual (TAU).
+
+# Setup
+Most readers will want to just skip to @sec-Descriptive. This section is mostly
+useful to the statistician who ran the analyses as methods and reproducibility 
+documentation.
+
+## Declare Path
+This next chunk declares the path to this script relative to the project-level 
+root directory. If the file is not in the right location under the project root
+you'll get a warning message. This helps ensure relative paths are all working 
+as expected. 
+
+``` {r}
+#| label: declare-path
+
+# Declare path to this script relative to the project root directory.
+here::i_am(path = paste0(params$SourceDir, params$SourceFile))
+```
+
+Note that `here()` creates a path relative to the location of the 
+`ADAPT_Anxiety.Rproj` file that will be portable across different computers.
+That's why we use that function when specifying file paths throughout the
+script.
+
+## Load Packages
+
+```{r}
+#| label: load-packages
+#| include: true
+
+library(devtools)     # for session_info()
+library(here)         # for here() and i_am(), handling relative file paths. 
+library(rmarkdown)    # for pandoc_version()
+library(knitr)        # for kable()
+options(kableExtra.latex.load_packages = FALSE)
+library(kableExtra)   # for kable_styling() and formatting tables. 
+library(tidyverse)    # Loads the dplyr, forcats, ggplot2, lubridate, purrr, 
+                      # readr, stringr, tibble, and tidyr packages, for access 
+                      # to %>%, select(), mutate(), etc. 
+library(quarto)       # for quarto_version()
+```
+
+
+# References
+
+
+# Software Information
+We used [R](https://www.r-project.org/) as our main computing environment and 
+[Quarto](https://quarto.org/) scripts to enhance reproducibility. We used 
+[RStudio](www.rstudio.org) as the editor to interface with R and Quarto. 
+
+- Software chain:
+  **qmd file > RStudio > Quarto > R > knitr > md file > Pandoc > html file**.
+- Source file: **`r params$SourceFile`**
+- Output file: **`r params$LogFile`**
+- [Quarto `r quarto_version()`](https://quarto.org/) runs `*.qmd` files through 
+  [R](https://www.r-project.org/) and [knitr](https://yihui.org/knitr/) to 
+  produce `*.md` markdown files.
+- [Pandoc `r rmarkdown::pandoc_version()`](https://pandoc.org) converts markdown 
+  files (`*.md`) to other formats, including LaTeX (`*.tex`) and HTML (`*.html`) 
+  among others.
+
+This document was generated using the following computational environment and 
+dependencies: 
+
+``` {r}
+#| label: show-version
+#| echo: true
+
+# Get R and R package version numbers in use.
+devtools::session_info()
+```
+
