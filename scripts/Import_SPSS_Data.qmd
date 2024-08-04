@@ -11,6 +11,8 @@ params:
   SourceDir: "scripts/"
   SourceFile: "Import_SPSS_Data.qmd"
   LogFile: "Import_SPSS_Data.html"
+bibliography: references.bib
+csl: apa.csl
 date: now
 date-modified: last-modified
 date-format: YYYY-MM-DD HH:mm:ss z
@@ -136,6 +138,10 @@ out which variables store the eligibility criteria.
 # Save the current working version of the clean data. 
 save(ADAPT_Clean_Data, file=here("data/ADAPT_Clean.RData"))
 ```
+
+# References
+::: {#refs}
+:::
 
 # Software Information
 We used [R](https://www.r-project.org/) as our main computing environment and 
