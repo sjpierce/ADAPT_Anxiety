@@ -88,6 +88,7 @@ library(kableExtra)   # for kable_styling() and formatting tables.
 library(tidyverse)    # Loads the dplyr, forcats, ggplot2, lubridate, purrr, 
                       # readr, stringr, tibble, and tidyr packages, for access 
                       # to %>%, select(), mutate(), etc. 
+library(piercer)      # for all_classes()
 library(quarto)       # for quarto_version()
 ```
 
