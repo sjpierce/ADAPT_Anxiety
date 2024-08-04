@@ -102,28 +102,69 @@ in the attached paper." The PI (Dr. Cunningham) wants those 2 patients excluded
 from these analyses too, so we should end up with 87 eligible, randomized 
 patients. 
 
+## Eligible Patients
+This section imports an SPSS file that contains the ID for each of the 87 
+eligible, randomized patients. It does not contain the outcome data we need, so 
+this will be used to help find the right set of cases in the outcomes data file. 
+While reading this file in, we use functions from the `assertr` package ensure 
+that all IDs are unique, non-missing values, and Randomization values are all
+non-missing and valid. 
 
 ```{r}
-#| label: read-spss-data
+#| label: read-spss-data-eligible
 
-ADAPT_Data <- read_spss(file = here("scripts/extdata/Cleaned_ADAPT_Data_Allocation_Included_07.08.24sav.sav"),
-                        user_na = TRUE)
+ADAPT_Eligible <- read_spss(file = here("scripts/extdata/JAMES ADAPT_UPDATE.sav"),
+                            user_na = TRUE) %>% 
+  # Give error if number of records is not 87. 
+  verify(nrow(.) == 87) %>% 
+  # Give error if any IDs or Randomization values are missing.
+  assert(function(x){not_na(x)}, ID, Randomization) %>% 
+  # Give error if any IDs are not unique.
+  assert(function(x){is_uniq(x, allow.na=FALSE)}, ID) %>% 
+  # Give error if any Randomization values are not either 1 or 2.
+  assert(in_set(1:2), Randomization) 
 ```
 
-The imported `ADAPT_Data` data frame has `r nrow(ADAPT_Data)` rows and 
-`r ncol(ADAPT_Data)` variables. @tbl-ADAPT-Data-variables shows a list of the 
-variable positions, names, and classes.
+The imported `ADAPT_Eligible` data frame has `r nrow(ADAPT_Eligible)` rows and 
+`r ncol(ADAPT_Eligible)` variables. @tbl-ADAPT-Eligible-variables shows a list 
+of the variable positions, names, and classes.
 
 ``` {r}
-#| label: tbl-ADAPT-Data-variables
-#| tbl-cap: "ADAPT Data: Raw Imported Variable Names and Classes."
+#| label: tbl-ADAPT-Eligible-variables
+#| tbl-cap: "ADAPT Eligible Patients Data: Raw Imported Variable Names and Classes."
 
-ADAPT_DataVars <- list(ADAPT_Data) %>% 
+ADAPT_EligibleVars <- list(ADAPT_Eligible) %>% 
   map_dfr(~ tibble(Name = names(.x), Class = map_chr(.x, all_classes))) %>% 
   rowid_to_column(., "Position")
 
-kable(ADAPT_DataVars, format = "html", booktabs = TRUE, longtable = TRUE) %>%
-  kable_styling(latex_options = c("repeat_header"))
+kable(ADAPT_EligibleVars, format = "html", booktabs = TRUE, longtable = TRUE) %>%
+  kable_styling(bootstrap_options = "striped", 
+                latex_options = c("repeat_header")) %>% 
+  footnote(kable_input = ., general = FN, footnote_as_chunk = TRUE)
+```
+
+@tbl-Eligible-arm-freq shows the frequency distribution of the randomized arm 
+allocations so we can confirm that this matches expected results based on 
+CONSORT chart in @Cunningham-RN8194. 
+
+```{r}
+#| label: tbl-Eligible-arm-freq
+#| tbl-cap: Number of Patients by Randomized Arm Allocation in ADAPT_Eligible Data
+
+ADAPT_Eligible %>% 
+  mutate(Arm = as_factor(Randomization)) %>% 
+  xtabs(~Arm, addNA = TRUE, data = .) %>% 
+  addmargins() %>% 
+  as.data.frame() %>% 
+  mutate(Type = case_when(Arm == "ADAPT" ~ "Intervention", 
+                          Arm == "TAU" ~ "Control",
+                          Arm == "Sum" ~ "Intervention + Control")) %>% 
+  select(Arm, Type, Freq) %>% 
+  kable(format = "html", booktabs = TRUE, 
+        col.names = c("Randomized Arm", "Type", "Frequency")) %>% 
+  kable_styling(bootstrap_options = "striped") 
+```
+
 ```
 
 # Data Management
