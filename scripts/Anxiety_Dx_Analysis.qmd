@@ -180,6 +180,25 @@ ADAPT_Clean_Data %>%
   add_header_above(header = c(" ", "Diagnosed at Posttest" = 3, " "))
 ```
 
+```{r}
+#| label: tbl-GAD-Change
+#| tbl-cap: "Change in Diagnosis with GAD Over Time"
+
+ADAPT_Clean_Data %>% 
+  mutate(Dx_Change = addNA(GAD_Change)) %>% 
+  group_by(Dx_Change, .drop = FALSE) %>% 
+  summarise(N = n()) %>% 
+  mutate(Percent = 100*N/sum(N)) %>% 
+  ungroup() %>% 
+  bind_rows(., 
+            tibble(Dx_Change = "Total", 
+                   N = sum(.[["N"]], na.rm = TRUE),
+                   Percent = sum(.[["Percent"]], na.rm = TRUE))) %>% 
+  kable(format = "html", digits = 0,
+        col.names = c("Diagnosis Change", "N", "%")) %>% 
+  kable_styling() 
+```
+
 I still need to add group-specific total rows to @tbl-xtabs-GAD-Arm. 
 
 ```{r}
