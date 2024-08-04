@@ -95,6 +95,13 @@ library(quarto)       # for quarto_version()
 ```
 
 # Import Data {#sec-Import}
+According to @Cunningham-RN8194, a total of 89 patients were randomized. Email 
+with team members shows that 2 TAU patients were later excluded "because 
+exclusion criteria was met at the post assessment, following the consort diagram 
+in the attached paper." The PI (Dr. Cunningham) wants those 2 patients excluded 
+from these analyses too, so we should end up with 87 eligible, randomized 
+patients. 
+
 
 ```{r}
 #| label: read-spss-data
