@@ -288,10 +288,22 @@ kable(ADAPT_CleanVars, format = "html", booktabs = TRUE, longtable = TRUE) %>%
 # Save Imported, Cleaned Data
 
 ``` {r}
-#| label: save-data
+#| label: save-ADAPT-CLean_Data
 
 # Save the current working version of the clean data. 
 save(ADAPT_Clean_Data, file=here("data/ADAPT_Clean.RData"))
+```
+
+The data file can be loaded into R by copying the following code chunk into a
+script, then changing the chunk option from  `eval: false` to `eval: true`, 
+and running the chunk. That will overwrite any objects already in memory that 
+have the same names as the objects being loaded.
+
+``` {r}
+#| label: load-ADAPT-Clean-Data
+#| eval: false
+
+load(file=here("data/ADAPT_Clean.RData"))
 ```
 
 # References
