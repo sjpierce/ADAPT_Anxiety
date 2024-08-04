@@ -11,6 +11,8 @@ params:
   SourceDir: "scripts/"
   SourceFile: "Anxiety_Dx_Analysis.qmd"
   LogFile: "Anxiety_Dx_Analysis_Draft.html"
+bibliography: references.bib
+csl: apa.csl
 date: now
 date-modified: last-modified
 date-format: YYYY-MM-DD HH:mm:ss z
@@ -92,6 +94,10 @@ library(quarto)       # for quarto_version()
 
 # References
 
+
+# References
+::: {#refs}
+:::
 
 # Software Information
 We used [R](https://www.r-project.org/) as our main computing environment and 
