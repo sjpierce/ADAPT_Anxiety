@@ -48,7 +48,8 @@ which was tracked by CSTAT as Case C1593. The original data come from one of
 Dr. Natoshia Cunningham's grants. Lucy is one of Dr. Cunningham's students. The
 study was a randomized controlled trial of a tailored cognitive behavioral
 therapy (CBT) treatment for functional abdominal pain in pediatric patients that
-was called ADAPT. The control group received treatment as usual (TAU).
+was called ADAPT [@Cunningham-RN8194]. The control group received treatment as 
+usual (TAU).
 
 # Setup
 Most readers will want to just skip to @sec-Descriptive. This section is mostly
