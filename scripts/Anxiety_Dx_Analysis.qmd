@@ -92,8 +92,37 @@ library(piercer)      # for all_classes()
 library(quarto)       # for quarto_version()
 ```
 
+## Read in Data
+Here we just read in the data we need for the analyses. 
 
-# References
+:::{.callout-important}
+This script assumes you have already used `scripts/Import_SPSS_data.qmd` to 
+create the data file `data/ADAPT_Clean.RData`.
+:::
+
+``` {r}
+#| label: load-ADAPT-Clean-Data
+
+load(file=here("data/ADAPT_Clean.RData"))
+```
+
+The imported `ADAPT_Clean_Data` data frame has `r nrow(ADAPT_Clean_Data)` rows 
+and `r ncol(ADAPT_Clean_Data)` variables. @tbl-ADAPT-Clean-variables shows a 
+list of the variable positions, names, and classes.
+
+``` {r}
+#| label: tbl-ADAPT-Clean-variables
+#| tbl-cap: "ADAPT Outcomes Clean Data: Variable Names and Classes."
+
+ADAPT_CleanVars <- list(ADAPT_Clean_Data) %>% 
+  map_dfr(~ tibble(Name = names(.x), Class = map_chr(.x, all_classes))) %>% 
+  rowid_to_column(., "Position")
+
+kable(ADAPT_CleanVars, format = "html", booktabs = TRUE, longtable = TRUE) %>%
+  kable_styling(bootstrap_options = "striped", 
+                latex_options = c("repeat_header")) 
+```
+
 
 
 # References
