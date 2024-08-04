@@ -116,6 +116,18 @@ kable(ADAPT_DataVars, format = "html", booktabs = TRUE, longtable = TRUE) %>%
   kable_styling(latex_options = c("repeat_header"))
 ```
 
+# Data Management
+Per Lucy's email, there should be a total of 87 eligible, randomized 
+participants. The data file has N = `r nrow(ADAPT_Data)`, so we have to figure 
+out which variables store the eligibility criteria. 
+
+```{r}
+#| label: manage-data
+
+# Need to filter to just eligible, randomized participants. 
+
+```
+
 # Save Imported, Cleaned Data
 
 ``` {r}
