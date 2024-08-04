@@ -265,7 +265,43 @@ ADAPT_Clean_Data <- ADAPT_Outcomes %>%
   verify(nrow(.) == nrow(ADAPT_Eligible)) %>% 
   # Retain only variables I'll need for analyses. Mostly this drops item-level 
   # variables from instruments
-  select(ID, Arm, all_of(c(demog_vars, outcome_vars, scores_vars)))
+  select(ID, Arm, all_of(c(demog_vars, outcome_vars, scores_vars))) %>% 
+  # Compute some new variables.
+  mutate(GAD_Change = case_when(
+            GAD_Pre > GAD_Post ~ "Improved",
+            GAD_Pre == GAD_Post ~ "No Change",
+            GAD_Pre < GAD_Post ~ "Worsened",
+            .default = NA),
+         Social_Change = case_when(
+            Social_Pre > Social_Post ~ "Improved",
+            Social_Pre == Social_Post ~ "No Change",
+            Social_Pre < Social_Post ~ "Worsened",
+            .default = NA),
+         SAD_Change = case_when(
+            SAD_Pre > SAD_Post ~ "Improved",
+            SAD_Pre == SAD_Post ~ "No Change",
+            SAD_Pre < SAD_Post ~ "Worsened",
+            .default = NA),
+         Panic_Change = case_when(
+            Panic_Pre > Panic_Post ~ "Improved",
+            Panic_Pre == Panic_Post ~ "No Change",
+            Panic_Pre < Panic_Post ~ "Worsened",
+            .default = NA),
+         OCD_Change = case_when(
+            OCD_Pre > OCD_Post ~ "Improved",
+            OCD_Pre == OCD_Post ~ "No Change",
+            OCD_Pre < OCD_Post ~ "Worsened",
+            .default = NA),
+         MDD_Change = case_when(
+            MDD_Pre > MDD_Post ~ "Improved",
+            MDD_Pre == MDD_Post ~ "No Change",
+            MDD_Pre < MDD_Post ~ "Worsened",
+            .default = NA),
+         Dysthymia_Change = case_when(
+            Dysthymia_Pre > Dysthymia_Post ~ "Improved",
+            Dysthymia_Pre == Dysthymia_Post ~ "No Change",
+            Dysthymia_Pre < Dysthymia_Post ~ "Worsened",
+            .default = NA))
 ```
 
 The imported `ADAPT_Clean_Data` data frame has `r nrow(ADAPT_Clean_Data)` rows 
