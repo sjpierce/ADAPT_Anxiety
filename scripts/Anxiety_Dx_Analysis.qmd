@@ -166,12 +166,7 @@ ADAPT_Clean_Data %>%
               values_from = N, values_fill = 0) %>% 
   mutate(Dx_Pre = as.character(Dx_Pre),
          Sum = Dx_Post_0 + Dx_Post_1 + Dx_Post_NA) %>% 
-  bind_rows(., 
-            tibble(Dx_Pre = "Sum", 
-                   Dx_Post_0 = sum(.[["Dx_Post_0"]], na.rm = TRUE),
-                   Dx_Post_1 = sum(.[["Dx_Post_1"]], na.rm = TRUE),
-                   Dx_Post_NA = sum(.[["Dx_Post_NA"]], na.rm = TRUE),
-                   Sum = sum(.[["Sum"]], na.rm = TRUE))) %>% 
+  adorn_totals(where = "row", name = "Sum") %>%
   kable(format = "html", 
         col.names = c("Diagnosed at Pretest", "0", "1", "NA", "Sum")) %>% 
   kable_styling() %>% 
@@ -191,10 +186,7 @@ ADAPT_Clean_Data %>%
   summarise(N = n()) %>% 
   mutate(Percent = 100*N/sum(N)) %>% 
   ungroup() %>% 
-  bind_rows(., 
-            tibble(Dx_Change = "Total", 
-                   N = sum(.[["N"]], na.rm = TRUE),
-                   Percent = sum(.[["Percent"]], na.rm = TRUE))) %>% 
+  adorn_totals(where = "row", name = "Sum") %>%
   kable(format = "html", digits = 0,
         col.names = c("Diagnosis Change", "N", "%")) %>% 
   kable_styling() 
@@ -216,6 +208,8 @@ ADAPT_Clean_Data %>%
               values_from = N, values_fill = 0) %>% 
   mutate(Dx_Pre = as.character(Dx_Pre),
          Sum = Dx_Post_0 + Dx_Post_1 + Dx_Post_NA) %>%   
+  group_by(Arm, .drop = FALSE) %>% 
+  group_modify(~ .x %>% adorn_totals(where = "row", name = "Sum")) %>%
   kable(format = "html", 
         col.names = c("Arm", "Diagnosed at Pretest", "0", "1", "NA", "Sum")) %>% 
   kable_styling() %>% 
@@ -241,12 +235,7 @@ ADAPT_Clean_Data %>%
               values_from = N, values_fill = 0) %>% 
   mutate(Dx_Pre = as.character(Dx_Pre),
          Sum = Dx_Post_0 + Dx_Post_1 + Dx_Post_NA) %>% 
-  bind_rows(., 
-            tibble(Dx_Pre = "Sum", 
-                   Dx_Post_0 = sum(.[["Dx_Post_0"]], na.rm = TRUE),
-                   Dx_Post_1 = sum(.[["Dx_Post_1"]], na.rm = TRUE),
-                   Dx_Post_NA = sum(.[["Dx_Post_NA"]], na.rm = TRUE),
-                   Sum = sum(.[["Sum"]], na.rm = TRUE))) %>%  
+  adorn_totals(where = "row", name = "Sum") %>%
   kable(format = "html", 
         col.names = c("Diagnosed at Pretest", "0", "1", "NA", "Sum")) %>% 
   kable_styling() %>% 
@@ -272,12 +261,7 @@ ADAPT_Clean_Data %>%
               values_from = N, values_fill = 0) %>% 
   mutate(Dx_Pre = as.character(Dx_Pre),
          Sum = Dx_Post_0 + Dx_Post_1 + Dx_Post_NA) %>% 
-  bind_rows(., 
-            tibble(Dx_Pre = "Sum", 
-                   Dx_Post_0 = sum(.[["Dx_Post_0"]], na.rm = TRUE),
-                   Dx_Post_1 = sum(.[["Dx_Post_1"]], na.rm = TRUE),
-                   Dx_Post_NA = sum(.[["Dx_Post_NA"]], na.rm = TRUE),
-                   Sum = sum(.[["Sum"]], na.rm = TRUE))) %>%  
+  adorn_totals(where = "row", name = "Sum") %>%
   kable(format = "html", 
         col.names = c("Diagnosed at Pretest", "0", "1", "NA", "Sum")) %>% 
   kable_styling() %>% 
@@ -303,12 +287,7 @@ ADAPT_Clean_Data %>%
               values_from = N, values_fill = 0) %>% 
   mutate(Dx_Pre = as.character(Dx_Pre),
          Sum = Dx_Post_0 + Dx_Post_1 + Dx_Post_NA) %>% 
-  bind_rows(., 
-            tibble(Dx_Pre = "Sum", 
-                   Dx_Post_0 = sum(.[["Dx_Post_0"]], na.rm = TRUE),
-                   Dx_Post_1 = sum(.[["Dx_Post_1"]], na.rm = TRUE),
-                   Dx_Post_NA = sum(.[["Dx_Post_NA"]], na.rm = TRUE),
-                   Sum = sum(.[["Sum"]], na.rm = TRUE))) %>%
+  adorn_totals(where = "row", name = "Sum") %>%
   kable(format = "html", 
         col.names = c("Diagnosed at Pretest", "0", "1", "NA", "Sum")) %>% 
   kable_styling() %>% 
@@ -334,12 +313,7 @@ ADAPT_Clean_Data %>%
               values_from = N, values_fill = 0) %>% 
   mutate(Dx_Pre = as.character(Dx_Pre),
          Sum = Dx_Post_0 + Dx_Post_1 + Dx_Post_NA) %>% 
-  bind_rows(., 
-            tibble(Dx_Pre = "Sum", 
-                   Dx_Post_0 = sum(.[["Dx_Post_0"]], na.rm = TRUE),
-                   Dx_Post_1 = sum(.[["Dx_Post_1"]], na.rm = TRUE),
-                   Dx_Post_NA = sum(.[["Dx_Post_NA"]], na.rm = TRUE),
-                   Sum = sum(.[["Sum"]], na.rm = TRUE))) %>%
+  adorn_totals(where = "row", name = "Sum") %>%
   kable(format = "html", 
         col.names = c("Diagnosed at Pretest", "0", "1", "NA", "Sum")) %>% 
   kable_styling() %>% 
@@ -365,12 +339,7 @@ ADAPT_Clean_Data %>%
               values_from = N, values_fill = 0) %>% 
   mutate(Dx_Pre = as.character(Dx_Pre),
          Sum = Dx_Post_0 + Dx_Post_1 + Dx_Post_NA) %>% 
-  bind_rows(., 
-            tibble(Dx_Pre = "Sum", 
-                   Dx_Post_0 = sum(.[["Dx_Post_0"]], na.rm = TRUE),
-                   Dx_Post_1 = sum(.[["Dx_Post_1"]], na.rm = TRUE),
-                   Dx_Post_NA = sum(.[["Dx_Post_NA"]], na.rm = TRUE),
-                   Sum = sum(.[["Sum"]], na.rm = TRUE))) %>%
+  adorn_totals(where = "row", name = "Sum") %>%
   kable(format = "html", 
         col.names = c("Diagnosed at Pretest", "0", "1", "NA", "Sum")) %>% 
   kable_styling() %>% 
@@ -396,12 +365,7 @@ ADAPT_Clean_Data %>%
               values_from = N, values_fill = 0) %>% 
   mutate(Dx_Pre = as.character(Dx_Pre),
          Sum = Dx_Post_0 + Dx_Post_1 + Dx_Post_NA) %>% 
-  bind_rows(., 
-            tibble(Dx_Pre = "Sum", 
-                   Dx_Post_0 = sum(.[["Dx_Post_0"]], na.rm = TRUE),
-                   Dx_Post_1 = sum(.[["Dx_Post_1"]], na.rm = TRUE),
-                   Dx_Post_NA = sum(.[["Dx_Post_NA"]], na.rm = TRUE),
-                   Sum = sum(.[["Sum"]], na.rm = TRUE))) %>%
+  adorn_totals(where = "row", name = "Sum") %>%
   kable(format = "html", 
         col.names = c("Diagnosed at Pretest", "0", "1", "NA", "Sum")) %>% 
   kable_styling() %>% 
