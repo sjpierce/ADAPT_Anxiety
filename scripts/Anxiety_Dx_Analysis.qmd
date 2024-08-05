@@ -221,6 +221,23 @@ ADAPT_Clean_Data %>%
                 row_group_label_position = "stack")
 ```
 
+```{r}
+#| label: tbl-GAD-Change-Arm
+#| tbl-cap: "Change in Diagnosis with GAD Over Time by Arm"
+
+ADAPT_Clean_Data %>% 
+  mutate(Dx_Change = addNA(GAD_Change)) %>% 
+  group_by(Arm, Dx_Change, .drop = FALSE) %>% 
+  summarise(N = n()) %>% 
+  mutate(Percent = 100*N/sum(N)) %>% 
+  group_modify(~ .x %>% adorn_totals(where = "row")) %>%
+  ungroup() %>% 
+  kable(format = "html", digits = 0,
+        col.names = c("Arm", "Diagnosis Change", "N", "%")) %>% 
+  kable_styling() %>% 
+  row_spec(row = c(5,10), bold = TRUE) %>% 
+  collapse_rows(columns = 1:2, valign = "top", latex_hline = "major", 
+                row_group_label_position = "stack")
 ```
 
 ### Social Anxiety Disorder (`Social_Pre`, `Social_Post`)
