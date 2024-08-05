@@ -193,8 +193,6 @@ ADAPT_Clean_Data %>%
   row_spec(row = 5, bold = TRUE)
 ```
 
-I still need to add group-specific total rows to @tbl-xtabs-GAD-Arm. 
-
 ```{r}
 #| label: tbl-xtabs-GAD-Arm
 #| tbl-cap: "Crosstab Diagnosed with GAD at Pretest vs Posttest by Arm"
