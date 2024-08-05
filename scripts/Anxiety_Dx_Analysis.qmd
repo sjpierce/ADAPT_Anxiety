@@ -197,7 +197,7 @@ I still need to add group-specific total rows to @tbl-xtabs-GAD-Arm.
 
 ```{r}
 #| label: tbl-xtabs-GAD-Arm
-#| tbl-cap: "Crosstab Diagnosed with GAD at Pretest vs Posttest"
+#| tbl-cap: "Crosstab Diagnosed with GAD at Pretest vs Posttest by Arm"
 
 ADAPT_Clean_Data %>% 
   mutate(Dx_Pre = addNA(GAD_Pre),
