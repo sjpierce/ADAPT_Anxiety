@@ -268,6 +268,8 @@ to do some data management to prepare it for use. Key steps include adding in
 a dropout indicator variable, removing rows for patients who were ineligible, 
 dropping variables we won't need, and computing some new variables. 
 
+```{r}
+#| label: create-ADAPT-Clean
 
 demog_vars   <- c("Caregender", "Caretype", "Age", "Gender", "Race", "race_cat",
                   "Mother.edu", "m_edu_group", "Father.edu", "f_edu_group",
