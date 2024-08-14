@@ -297,16 +297,19 @@ scores_vars  <- c("DASS_Tot_Pre", "DASS_Tot_Post", "SCARED_Tot_Pre",
 
 ADAPT_Clean_Data <- ADAPT_Outcomes %>% 
   mutate(Arm = as_factor(Allocation),
-         Eligible = ID %in% ADAPT_Eligible$ID) %>% 
+         Eligible = ID %in% ADAPT_Eligible$ID,
+         Dropout = ID %in% ADAPT_Eligible_Dropout$ID) %>% 
   # Retain only eligible, randomized participants. 
   filter(Eligible == TRUE) %>% 
   # Give error if number of records does not match expected value. 
   verify(nrow(.) == nrow(ADAPT_Eligible)) %>% 
   # Retain only variables I'll need for analyses. Mostly this drops item-level 
   # variables from instruments
-  select(ID, Arm, all_of(c(demog_vars, outcome_vars, scores_vars))) %>% 
+  select(ID, Arm, Dropout, all_of(c(demog_vars, outcome_vars, scores_vars))) %>% 
   # Compute some new variables.
-  mutate(GAD_Change = case_when(
+  mutate(Dropout = factor(Dropout, levels = c(FALSE, TRUE), 
+                          labels = c("Retained", "Dropped")), 
+         GAD_Change = case_when(
             GAD_Pre > GAD_Post ~ "Improved",
             GAD_Pre == GAD_Post ~ "No Change",
             GAD_Pre < GAD_Post ~ "Worsened",
