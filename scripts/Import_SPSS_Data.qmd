@@ -135,13 +135,13 @@ of the variable positions, names, and classes.
 #| tbl-cap: "ADAPT Eligible Patients Data: Raw Imported Variable Names and Classes."
 
 ADAPT_EligibleVars <- list(ADAPT_Eligible) %>% 
-  map_dfr(~ tibble(Name = names(.x), Class = map_chr(.x, all_classes))) %>% 
+  map_dfr(~ tibble(Name = names(.x), Class = map_chr(.x, all_classes), 
+                   Label = var_label(.x))) %>% 
   rowid_to_column(., "Position")
 
 kable(ADAPT_EligibleVars, format = "html", booktabs = TRUE, longtable = TRUE) %>%
   kable_styling(bootstrap_options = "striped", 
-                latex_options = c("repeat_header")) %>% 
-  footnote(kable_input = ., general = FN, footnote_as_chunk = TRUE)
+                latex_options = c("repeat_header")) 
 ```
 
 @tbl-Eligible-arm-freq shows the frequency distribution of the randomized arm 
@@ -194,7 +194,8 @@ of the variable positions, names, and classes.
 #| tbl-cap: "ADAPT Outcomes Data: Raw Imported Variable Names and Classes."
 
 ADAPT_OutcomesVars <- list(ADAPT_Outcomes) %>% 
-  map_dfr(~ tibble(Name = names(.x), Class = map_chr(.x, all_classes))) %>% 
+  map_dfr(~ tibble(Name = names(.x), Class = map_chr(.x, all_classes), 
+                   Label = var_label(.x))) %>% 
   rowid_to_column(., "Position")
 
 kable(ADAPT_OutcomesVars, format = "html", booktabs = TRUE, longtable = TRUE) %>%
@@ -314,7 +315,8 @@ list of the variable positions, names, and classes.
 #| tbl-cap: "ADAPT Outcomes Clean Data: Variable Names and Classes."
 
 ADAPT_CleanVars <- list(ADAPT_Clean_Data) %>% 
-  map_dfr(~ tibble(Name = names(.x), Class = map_chr(.x, all_classes))) %>% 
+  map_dfr(~ tibble(Name = names(.x), Class = map_chr(.x, all_classes), 
+                   Label = var_label(.x))) %>% 
   rowid_to_column(., "Position")
 
 kable(ADAPT_CleanVars, format = "html", booktabs = TRUE, longtable = TRUE) %>%
