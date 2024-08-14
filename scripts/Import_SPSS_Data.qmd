@@ -89,7 +89,8 @@ library(tidyverse)    # Loads the dplyr, forcats, ggplot2, lubridate, purrr,
                       # readr, stringr, tibble, and tidyr packages, for access 
                       # to %>%, select(), mutate(), etc. 
 library(haven)        # for read_spss().
-library(assertr)       # for verify() and assert()
+library(labelled)     # for set_variable_labels()
+library(assertr)      # for verify() and assert()
 library(piercer)      # for all_classes()
 library(quarto)       # for quarto_version()
 ```
