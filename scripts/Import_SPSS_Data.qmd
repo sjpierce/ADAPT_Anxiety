@@ -375,7 +375,7 @@ kable(ADAPT_CleanVars, format = "html", booktabs = TRUE, longtable = TRUE) %>%
 # Save Imported, Cleaned Data
 
 ``` {r}
-#| label: save-ADAPT-CLean_Data
+#| label: save-ADAPT-Clean_Data
 
 # Save the current working version of the clean data. 
 save(ADAPT_Clean_Data, file=here("data/ADAPT_Clean.RData"))
