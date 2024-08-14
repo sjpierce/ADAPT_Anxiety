@@ -227,9 +227,9 @@ ADAPT_Outcomes %>%
 
 # Data Management
 Per the ADAPT_Eligible dataset, there are `r nrow(ADAPT_Eligible)` eligible, 
-randomized participants. However, the `ADAPT_Outcomes` data file has 
-`r nrow(ADAPT_Outcomes)`, so we have to do some data management to prepare it 
-for use. 
+randomized participants. We need to determine which participants dropped out 
+after baseline. @tbl-Eligible-Dropout shows a crosstabulation of dropout status
+by study arm. 
 
 ```{r}
 #| label: tbl-Eligible-Dropout
