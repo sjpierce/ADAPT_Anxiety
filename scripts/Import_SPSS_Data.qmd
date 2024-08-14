@@ -232,7 +232,37 @@ randomized participants. However, the `ADAPT_Outcomes` data file has
 for use. 
 
 ```{r}
-#| label: manage-data
+#| label: tbl-Eligible-Dropout
+#| tbl-cap: Number of Eligible Patients by Dropout Status and Randomized Arm 
+#|          Allocation in ADAPT_Eligible Data
+
+ADAPT_Eligible %>% 
+  mutate(Arm = as_factor(Randomization), 
+         Dropout = factor(attrition, levels = c(0,1), 
+                          labels = c("Retained through post-test", 
+                                     "Dropped out after baseline"))) %>% 
+  xtabs(~Dropout + Arm, addNA = TRUE, data = .) %>% 
+  addmargins() %>% 
+  as.data.frame() %>% 
+  pivot_wider(names_from = Arm, values_from = Freq) %>% 
+  kable(format = "html", booktabs = TRUE) %>% 
+  kable_styling(bootstrap_options = "striped") 
+```
+
+Because we know some eligible patients dropped out after baseline, we create 
+`ADAPT_Eligible_Dropout` to store the IDs for those patients. 
+
+```{r}
+#| label: create-ADAPT-Eligible-Dropout
+
+ADAPT_Eligible_Dropout <- ADAPT_Eligible %>% 
+  filter(attrition == 1) 
+```
+
+The `ADAPT_Eligible_Dropout` data has N = `r nrow(ADAPT_Eligible_Dropout)` rows. 
+We will use this dataset while creating a dropout status variable in the 
+outcomes data. 
+
 
 demog_vars   <- c("Caregender", "Caretype", "Age", "Gender", "Race", "race_cat",
                   "Mother.edu", "m_edu_group", "Father.edu", "f_edu_group",
