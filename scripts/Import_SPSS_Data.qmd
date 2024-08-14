@@ -343,7 +343,15 @@ ADAPT_Clean_Data <- ADAPT_Outcomes %>%
             Dysthymia_Pre > Dysthymia_Post ~ "Improved",
             Dysthymia_Pre == Dysthymia_Post ~ "No Change",
             Dysthymia_Pre < Dysthymia_Post ~ "Worsened",
-            .default = NA))
+            .default = NA)) %>% 
+  set_variable_labels(Dropout = "Dropout Status (at posttest)",
+                      GAD_Change = "GAD diagnosis change (pretest to posttest)",
+                      Social_Change = "Social anxiety diagnosis change (pretest to posttest)",
+                      SAD_Change = "SAD diagnosis change (pretest to posttest)",
+                      Panic_Change = "Panic disorder diagnosis change (pretest to posttest)",
+                      OCD_Change = "OCD diagnosis change (pretest to posttest)",
+                      MDD_Change = "MDD diagnosis change (pretest to posttest)",
+                      Dysthymia_Change = "Dystyhmia diagnosis change (pretest to posttest)")
 ```
 
 The imported `ADAPT_Clean_Data` data frame has `r nrow(ADAPT_Clean_Data)` rows 
