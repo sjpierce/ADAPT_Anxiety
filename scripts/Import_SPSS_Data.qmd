@@ -352,7 +352,22 @@ ADAPT_Clean_Data <- ADAPT_Outcomes %>%
             Dysthymia_Pre > Dysthymia_Post ~ "Improved",
             Dysthymia_Pre == Dysthymia_Post ~ "No Change",
             Dysthymia_Pre < Dysthymia_Post ~ "Worsened",
-            .default = NA)) %>% 
+            .default = NA),
+         # Change variable types for mice() compatibility. 
+         GAD_Pre = as_factor(GAD_Pre),
+         Social_Pre = as_factor(Social_Pre),
+         SAD_Pre = as_factor(SAD_Pre),
+         Panic_Pre = as_factor(Panic_Pre),
+         OCD_Pre = as_factor(OCD_Pre),
+         MDD_Pre = as_factor(MDD_Pre),
+         Dysthymia_Pre = as_factor(Dysthymia_Pre),
+         GAD_Post = as_factor(GAD_Post),
+         Social_Post = as_factor(Social_Post),
+         SAD_Post = as_factor(SAD_Post),
+         Panic_Post = as_factor(Panic_Post),
+         OCD_Post = as_factor(OCD_Post),
+         MDD_Post = as_factor(MDD_Post),
+         Dysthymia_Post = as_factor(Dysthymia_Post)) %>% 
   set_variable_labels(Dropout = "Dropout Status (at posttest)",
                       GAD_Change = "GAD diagnosis change (pretest to posttest)",
                       Social_Change = "Social anxiety diagnosis change (pretest to posttest)",
