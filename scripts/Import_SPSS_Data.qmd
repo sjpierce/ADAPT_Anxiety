@@ -290,12 +290,14 @@ demog_vars   <- c("Caregender", "Caretype", "Age", "Gender", "race_cat",
                   "diagnosis", "other.dx", "primary.pain", "other.primary", 
                   "pain.oth.cat", "pain.other", 
                   "Pain_High_Screen", "Pain_Low_Screen", "Pain_Avg_Screen")
-outcome_vars <- c("GAD_Pre", "GAD_Post", "Social_Pre", "Social_Post", "SAD_Pre", 
-                  "SAD_Post", "Panic_Pre", "Panic_Post", "OCD_Pre", "OCD_Post", 
-                  "MDD_Pre", "MDD_Post", "Dysthymia_Pre", "Dysthymia_Post")
-scores_vars  <- c("DASS_Tot_Pre", "DASS_Tot_Post", "SCARED_Tot_Pre", 
-                  "SCARED_Tot_Post", "CDI_Tot_Pre", "CDI_Tot_Post", 
-                  "PCS_Tot_Pre", "PCS_Tot_Post", "FDI_Tot_Pre", "FDI_Tot_Post")
+outcome_pre <- c("GAD_Pre", "Social_Pre", "SAD_Pre", "Panic_Pre", "OCD_Pre", 
+                 "MDD_Pre", "Dysthymia_Pre")
+outcome_post <- c("GAD_Post", "Social_Post", "SAD_Post", "Panic_Post", 
+                  "OCD_Post", "MDD_Post", "Dysthymia_Post")
+scores_pre  <- c("DASS_Tot_Pre", "SCARED_Tot_Pre", "CDI_Tot_Pre", "PCS_Tot_Pre", 
+                 "FDI_Tot_Pre")
+scores_post  <- c("DASS_Tot_Post", "SCARED_Tot_Post", "CDI_Tot_Post", 
+                  "PCS_Tot_Post", "FDI_Tot_Post")
 
 ADAPT_Clean_Data <- ADAPT_Outcomes %>% 
   mutate(Arm = as_factor(Allocation),
@@ -307,7 +309,8 @@ ADAPT_Clean_Data <- ADAPT_Outcomes %>%
   verify(nrow(.) == nrow(ADAPT_Eligible)) %>% 
   # Retain only variables I'll need for analyses. Mostly this drops item-level 
   # variables from instruments
-  select(ID, Arm, Dropout, all_of(c(demog_vars, outcome_vars, scores_vars))) %>% 
+  select(ID, Arm, Dropout, all_of(c(demog_vars, outcome_pre, scores_pre, 
+                                    outcome_post, scores_post))) %>% 
   # Compute some new variables.
   mutate(Dropout = factor(Dropout, levels = c(FALSE, TRUE), 
                           labels = c("Retained", "Dropped")), 
