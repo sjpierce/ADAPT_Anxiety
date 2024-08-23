@@ -300,9 +300,13 @@ scores_post  <- c("DASS_Tot_Post", "SCARED_Tot_Post", "CDI_Tot_Post",
                   "PCS_Tot_Post", "FDI_Tot_Post")
 
 ADAPT_Clean_Data <- ADAPT_Outcomes %>% 
-  mutate(Arm = as_factor(Allocation),
+  mutate(ID = as_factor(ID), 
+         Arm = as_factor(Allocation),
          Eligible = ID %in% ADAPT_Eligible$ID,
-         Dropout = ID %in% ADAPT_Eligible_Dropout$ID) %>% 
+         Dropout = ID %in% ADAPT_Eligible_Dropout$ID,
+         Age = as.numeric(Age),
+         Gender = as_factor(Gender), 
+         race_cat = as_factor(race_cat)) %>% 
   # Retain only eligible, randomized participants. 
   filter(Eligible == TRUE) %>% 
   # Give error if number of records does not match expected value. 
