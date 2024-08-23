@@ -273,7 +273,7 @@ traditional classes for compatibility with `mice()`.
 ```{r}
 #| label: create-ADAPT-Clean
 
-demog_vars   <- c("Caregender", "Caretype", "Age", "Gender", "Race", "race_cat",
+demog_vars   <- c("Caregender", "Caretype", "Age", "Gender", "race_cat",
                   "Mother.edu", "m_edu_group", "Father.edu", "f_edu_group",
                   "Mother.employ", "M_employ_group", "M.code", "M.SEItot", 
                   "M.SEIm", "Father.employ", "F_employ_group", "F.code", 
