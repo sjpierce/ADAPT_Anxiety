@@ -1,0 +1,331 @@
+---
+title: "Assess Missingness in ADAPT Data"
+subtitle: "Client: Lucy Nguyen. CSTAT Case: C1593"
+author: 
+  - name: Steven J. Pierce
+    orcid: 0000-0002-0679-3019
+    email: pierces1@msu.edu
+    affiliations: 
+      - name: Michigan State University, Center for Statistical Training and Consulting
+params:
+  SourceDir: "scripts/"
+  SourceFile: "Assess_Missingness.qmd"
+  LogFile: "Assess_Missingness_Draft.html"
+bibliography: references.bib
+csl: apa.csl
+date: now
+date-modified: last-modified
+date-format: YYYY-MM-DD HH:mm:ss z
+format: 
+  html:
+    output-file: "Assess_Missingness_Draft.html"
+    toc: true
+    toc-depth: 3
+    toc-location: left
+    number-sections: true
+    number-depth: 3
+    code-fold: true
+    code-tools: true
+    code-line-numbers: false
+    embed-resources: true 
+    anchor-sections: true
+    theme: default
+execute: 
+  eval: true 
+  echo: fenced 
+  output: true 
+  message: true 
+  warning: true 
+  error: true 
+  include: true 
+---
+
+# Overview
+This file contains results of statistical analyses performed by a 
+[CSTAT](https://cstat.msu.edu) statistician for a project called 
+*Effects of How Mental Health Diagnosis in Pediatric Patients with Functional Abdominal Pain Disorders Respond to Cognitive Behavioral Therapy Specifically for Anxiety Symptoms*, 
+which was tracked by CSTAT as Case C1593. The original data come from one of 
+Dr. Natoshia Cunningham's grants. Lucy is one of Dr. Cunningham's students. The
+study was a randomized controlled trial of a tailored cognitive behavioral
+therapy (CBT) treatment for functional abdominal pain in pediatric patients that
+was called ADAPT [@Cunningham-RN8194]. The control group received treatment as 
+usual (TAU).
+
+This file assesses the degree and patterns of missng data in variables we may 
+want for the intended analyses. 
+
+
+# Setup
+Most readers will want to just skip to @sec-Examine-Missing. This section is mostly
+useful to the statistician who ran the analyses as methods and reproducibility 
+documentation.
+
+## Declare Path
+This next chunk declares the path to this script relative to the project-level 
+root directory. If the file is not in the right location under the project root
+you'll get a warning message. This helps ensure relative paths are all working 
+as expected. 
+
+``` {r}
+#| label: declare-path
+
+# Declare path to this script relative to the project root directory.
+here::i_am(path = paste0(params$SourceDir, params$SourceFile))
+```
+
+Note that `here()` creates a path relative to the location of the 
+`ADAPT_Anxiety.Rproj` file that will be portable across different computers.
+That's why we use that function when specifying file paths throughout the
+script.
+
+## Load Packages
+
+```{r}
+#| label: load-packages
+#| include: true
+
+library(devtools)     # for session_info()
+library(here)         # for here() and i_am(), handling relative file paths. 
+library(rmarkdown)    # for pandoc_version()
+library(knitr)        # for kable()
+options(kableExtra.latex.load_packages = FALSE)
+library(kableExtra)   # for kable_styling() and formatting tables. 
+library(tidyverse)    # Loads the dplyr, forcats, ggplot2, lubridate, purrr, 
+                      # readr, stringr, tibble, and tidyr packages, for access 
+                      # to %>%, select(), mutate(), etc. 
+library(labelled)     # for set_variable_labels(), var_label()
+library(piercer)      # for all_classes()
+library(janitor)      # for adorn_totals()
+library(mice)         # for mice(), flux(), etc. 
+library(ggmice)       # for plot_pattern(), plot_corr()
+library(VIM)          # for aggr()
+library(quarto)       # for quarto_version()
+```
+
+## Read in Data
+Here we just read in the data we need for the analyses. 
+
+:::{.callout-important}
+This script assumes you have already used `scripts/Import_SPSS_data.qmd` to 
+create the data file `data/ADAPT_Clean.RData`.
+:::
+
+``` {r}
+#| label: load-ADAPT-Clean-Data
+
+load(file=here("data/ADAPT_Clean.RData"))
+```
+
+The imported `ADAPT_Clean_Data` data frame has `r nrow(ADAPT_Clean_Data)` rows 
+and `r ncol(ADAPT_Clean_Data)` variables. @tbl-ADAPT-Clean-variables shows a 
+list of the variable positions, names, and classes.
+
+``` {r}
+#| label: tbl-ADAPT-Clean-variables
+#| tbl-cap: "ADAPT Outcomes Clean Data: Variable Names and Classes."
+
+ADAPT_CleanVars <- list(ADAPT_Clean_Data) %>% 
+  map_dfr(~ tibble(Name = names(.x), Class = map_chr(.x, all_classes), 
+                   Label = var_label(.x))) %>% 
+  rowid_to_column(., "Position")
+
+kable(ADAPT_CleanVars, format = "html", booktabs = TRUE, longtable = TRUE) %>%
+  kable_styling(bootstrap_options = "striped", 
+                latex_options = c("repeat_header")) 
+```
+
+## Manage Data
+Below we create the `ADAPT_PreImpute` dataset we will use for imputation. We are 
+omitting many variables to focus on some key demographics, instrument scores, 
+and the binary outcome variables. 
+
+``` {r}
+#| label: create-ADAPT-PreImpute
+
+outcome_pre <- c("GAD_Pre", "Social_Pre", "SAD_Pre", "Panic_Pre", "OCD_Pre", 
+                 "MDD_Pre", "Dysthymia_Pre")
+outcome_post <- c("GAD_Post", "Social_Post", "SAD_Post", "Panic_Post", 
+                  "OCD_Post", "MDD_Post", "Dysthymia_Post")
+scores_pre  <- c("DASS_Tot_Pre", "SCARED_Tot_Pre", "CDI_Tot_Pre", "PCS_Tot_Pre", 
+                 "FDI_Tot_Pre")
+scores_post  <- c("DASS_Tot_Post", "SCARED_Tot_Post", "CDI_Tot_Post", 
+                  "PCS_Tot_Post", "FDI_Tot_Post")
+
+ADAPT_PreImpute <- ADAPT_Clean_Data %>% 
+  select(ID, Arm, Dropout, Age, Gender, race_cat, 
+         all_of(c(scores_pre, outcome_pre, scores_post, outcome_post)))
+```
+
+The imported `ADAPT_PreImpute` data frame has `r nrow(ADAPT_PreImpute)` rows 
+and `r ncol(ADAPT_PreImpute)` variables. @tbl-ADAPT-PreImpute-variables shows a 
+list of the variable positions, names, classes, number of valid and missing 
+values, and percent of missing values.
+
+``` {r}
+#| label: tbl-ADAPT-PreImpute-variables
+#| tbl-cap: "ADAPT Pre-Imputation Data: Variable Names and Classes."
+
+list(ADAPT_PreImpute) %>% 
+  map_dfr(~ tibble(Name = names(.x), 
+                   Class = map_chr(.x, all_classes),
+                   Label = get_variable_labels(.x), 
+                   N_Valid = colSums(!is.na(.x)),
+                   N_Missing = colSums(is.na(.x)),
+                   Pct_Missing = 100*N_Missing/nrow(.x))) %>% 
+  rowid_to_column(., "Position") %>% 
+  kable(., format = "html", booktabs = TRUE, longtable = TRUE, digits = 1) %>%
+  kable_styling(bootstrap_options = "striped", 
+                latex_options = c("repeat_header")) 
+```
+
+# Examine Missingness {#sec-Examine-Missing}
+
+```{r}
+#| label: tbl-N
+#| tbl-cap: Sample Size by Completeness of Data for Cases
+
+mpat <- ADAPT_PreImpute %>% 
+  select(-ID) %>% 
+  md.pattern(x = ., plot = FALSE)
+
+N_Total <- nrow(ADAPT_PreImpute)
+
+# Number of complete cases
+NCC <- ADAPT_PreImpute %>% 
+  select(-ID) %>%
+  ncc()
+
+# Percent of complete cases
+PCC <- round(100*NCC/N_Total, digits = 0)
+
+# Number of incomplete cases
+NIC <- ADAPT_PreImpute %>% 
+  select(-ID) %>%
+  nic()
+
+# Percent of incomplete cases
+PIC <- round(100*NIC/N_Total, digits = 0)
+
+data.frame(N_Total, NCC, PCC, NIC, PIC) %>% 
+  kable(., format = "html", booktabs = TRUE, 
+        col.names = c("N", "N", "%", "N", "%")) %>% 
+  kable_styling() %>% 
+  add_header_above(., header = c(" ", "Complete Cases" = 2, "Incomplete Cases" = 2))
+```
+
+If we do imputation, the number of imputations should be about equal to the 
+percent of cases that are incomplete (i.e., have any missing data). @tbl-N shows 
+we have $N = `r N_Total`$ cases, of which $N_c = `r NCC`$ (`r PCC`%) are complete 
+and $N_i = `r NIC`$ (`r PIC`%) are incomplete. 
+
+@fig-patterns shows that patterns of missing data. Each row represents a unique 
+pattern of observed versus missing data across `r ncol(ADAPT_PreImpute) - 1` 
+variables. Each column shows a particular variable. The color of the cell 
+indicates whether the data are observed or missing for a given variable in a 
+specific pattern (i.e., row). The margins are annotated with additional 
+information. @fig-patterns shows that the vast majority of the patients have
+complete data on all the variables. The most common pattern of missingness is
+tied to patients who dropped out before the posttest and thus have missing data
+on all posttest measures. The `Dropout` variable marks those who dropped out and
+must be used in imputations because it helps explain why some data are missing. 
+We have at least $29 - 12 = 17$  observed variables for every patient in the 
+sample. We can also see that for *every* patient, we have observed values for 
+the seven key outcome variables (`GAD_*`, `Social_*`, `SAD_*`, `Panic_*`, 
+`OCD_*`, `MDD_*`, & `Dysthymia_*`) at at least one time point (`*_Pre` or 
+`*_Post`). 
+
+```{r}
+#| label: fig-patterns
+#| fig-cap: Patterns of Missingness in ADAPT Pre-Imputation Data
+
+ADAPT_PreImpute %>% 
+  select(-ID) %>% 
+  plot_pattern(data = ., rotate = TRUE)
+```
+
+@fig-corrs shows that there are a variety of small to moderate correlations 
+between variables that may facilitation imputation. 
+
+```{r}
+#| label: fig-corrs
+#| fig-cap: Correlations in ADAPT Pre-Imputation Data
+#| fig-height: 8
+#| fig-wdith: 10
+
+ADAPT_PreImpute %>% 
+  select(-ID) %>% 
+  plot_corr(data = ., rotate = TRUE)
+```
+
+@tbl-flux shows the influx and outflux coefficients for each variable. These are
+measures of connectedness in the data. Influx and outflux summarize the missing
+data pattern and inform creating imputation models. High influx makes it easier
+to impute that variable, while high outflux indicates that variable may help
+impute other variables. Both measures range from 0 to 1. Influx will be $I = 0$
+for a completely observed variable and $I = 1$ for completely missing variable. 
+Given two variables with the same amount of missing data, the one with larger 
+influx should be easier to impute. Outflux is $O = 1$ for a completely observed 
+variable and is $O = 0$ for a completely missing variable. 
+
+```{r}
+#| label: tbl-flux
+#| tbl-cap: Influx and Outflux Coefficients in ADAPT Pre-Imputation Data
+
+ADAPT_PreImpute %>% 
+  select(-ID) %>% 
+  flux() %>% 
+  select(pobs, influx, outflux) %>% 
+  rownames_to_column(., var = "Variable") %>% 
+  kable(., format = "html", booktabs = TRUE, digits = 3, 
+        col.names = c("Variable", "Proportion Observed", "Influx", "Outflux")) %>% 
+  kable_styling()
+```
+
+## Impute Missing Data
+
+```{r}
+#| label: impute-data
+
+# Capture initial default settings for mice to get predictor matrix.
+ini <- mice(data = ADAPT_PreImpute, maxit=0) 
+
+# Extract and update the predictor matrix. 
+Predictors <- ini$predictorMatrix 
+Predictors[,'ID'] <- 0 # Exclude ID variable as a predictor
+
+imp <- mice(data = ADAPT_PreImpute, m = 1, pred = Predictors, method = "pmm", 
+            seed = 31766)
+```
+
+
+# References
+::: {#refs}
+:::
+
+# Software Information
+We used [R](https://www.r-project.org/) as our main computing environment and 
+[Quarto](https://quarto.org/) scripts to enhance reproducibility. We used 
+[RStudio](www.rstudio.org) as the editor to interface with R and Quarto. 
+
+- Software chain:
+  **qmd file > RStudio > Quarto > R > knitr > md file > Pandoc > html file**.
+- Source file: **`r params$SourceFile`**
+- Output file: **`r params$LogFile`**
+- [Quarto `r quarto_version()`](https://quarto.org/) runs `*.qmd` files through 
+  [R](https://www.r-project.org/) and [knitr](https://yihui.org/knitr/) to 
+  produce `*.md` markdown files.
+- [Pandoc `r rmarkdown::pandoc_version()`](https://pandoc.org) converts markdown 
+  files (`*.md`) to other formats, including LaTeX (`*.tex`) and HTML (`*.html`) 
+  among others.
+
+This document was generated using the following computational environment and 
+dependencies: 
+
+``` {r}
+#| label: show-version
+#| echo: true
+
+# Get R and R package version numbers in use.
+devtools::session_info()
+```
+
