@@ -266,7 +266,9 @@ outcomes data.
 The `ADAPT_Outcomes` data file has N = `r nrow(ADAPT_Outcomes)` rows, so we have 
 to do some data management to prepare it for use. Key steps include adding in 
 a dropout indicator variable, removing rows for patients who were ineligible, 
-dropping variables we won't need, and computing some new variables. 
+dropping variables we won't need, and computing some new variables. We also have 
+to convert some variables that are stored as `haven_labelled` classes to more 
+traditional classes for compatibility with `mice()`. 
 
 ```{r}
 #| label: create-ADAPT-Clean
