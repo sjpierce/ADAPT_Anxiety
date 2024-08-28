@@ -484,11 +484,122 @@ variable that has missing data to be imputed.
 plot_pred(Predictors, rotate = TRUE)
 ```
 
+## Perform The Actual Imputation
+The chunk below does the actual imputation. 
 
-imp <- mice(data = ADAPT_PreImpute, m = 1, pred = Predictors, method = "pmm", 
-            seed = 31766)
+```{r}
+#| label: impute-data
+#| eval: true
+
+# This does the actual imputation. 
+imp <- mice(data = ADAPT_PreImpute, m = 5, pred = Predictors, method = "pmm", 
+            maxit = 20, seed = 31766, printFlag = FALSE)
 ```
 
+## Diagnostics: Traceplots
+@fig-traceplots-scores-pre, @fig-traceplots-outcome-pre, 
+@fig-traceplots-scores-post, and @fig-traceplots-outcome-post show trace plots 
+for batches of variables that let us assess whether the imputation model has 
+converged. We need to reach convergence before we can rely on the results. 
+
+```{r}
+#| label: fig-traceplots-scores-pre
+#| fig-cap: Imputation Trace Plot
+#| fig-height: 7
+#| fig-wdith: 7
+
+plot_trace(imp, vrb = c("DASS_Tot_Pre", "SCARED_Tot_Pre"))
+```
+
+```{r}
+#| label: fig-traceplots-outcome-pre
+#| fig-cap: Imputation Trace Plot
+#| fig-height: 7
+#| fig-wdith: 7
+
+plot_trace(imp, vrb = c("GAD_Pre", "Social_Pre", "SAD_Pre", "Panic_Pre",
+                        "OCD_Pre", "MDD_Pre", "Dysthymia_Pre"))
+```
+
+```{r}
+#| label: fig-traceplots-scores-post
+#| fig-cap: Imputation Trace Plot
+#| fig-height: 7
+#| fig-wdith: 7
+
+plot_trace(imp, vrb = c("DASS_Tot_Post", "SCARED_Tot_Post", "CDI_Tot_Post", 
+                        "PCS_Tot_Post", "FDI_Tot_Post"))
+```
+
+```{r}
+#| label: fig-traceplots-outcome-post
+#| fig-cap: Imputation Trace Plot
+#| fig-height: 7
+#| fig-wdith: 7
+
+plot_trace(imp, vrb = c("GAD_Post", "Social_Post", "SAD_Post", "Panic_Post",
+                        "OCD_Post", "MDD_Post", "Dysthymia_Post"))
+```
+
+## Diagnostics: Logged Events
+
+```{r}
+#| label: tbl-logged-events
+#| tbl-cap: Logged Events from Imputation
+
+# Show a table only if there are logged events (which indicate problems)
+if(!is.null(imp$loggedEvents)){
+  imp$loggedEvents %>% 
+  kable() %>% 
+  kable_styling() 
+} 
+```
+
+## Diagnostics: Variable Distributions
+
+```{r}
+#| label: fig-stripplots
+#| fig-cap: Imputation Strip Plot Comparing Distributionhs of Continuous 
+#|          Variables for 
+
+stripplot(x = imp, xlab = "Dataset m (0 is Unimputed, 1-5 are Imputed)")
+```
+
+
+```{r}
+ggmice(imp, mapping = aes(x = GAD_Post)) + 
+  geom_bar(fill = "white", stat = "count")
+```
+
+```{r}
+ggmice(imp, mapping = aes(x = Social_Post)) + 
+  geom_bar(fill = "white", stat = "count")
+```
+
+```{r}
+ggmice(imp, mapping = aes(x = SAD_Post)) + 
+  geom_bar(fill = "white", stat = "count")
+```
+
+```{r}
+ggmice(imp, mapping = aes(x = Panic_Post)) + 
+  geom_bar(fill = "white", stat = "count")
+```
+
+```{r}
+ggmice(imp, mapping = aes(x = OCD_Post)) + 
+  geom_bar(fill = "white", stat = "count")
+```
+
+```{r}
+ggmice(imp, mapping = aes(x = MDD_Post)) + 
+  geom_bar(fill = "white", stat = "count")
+```
+
+```{r}
+ggmice(imp, mapping = aes(x = Dysthymia_Post)) + 
+  geom_bar(fill = "white", stat = "count")
+```
 
 # References
 ::: {#refs}
