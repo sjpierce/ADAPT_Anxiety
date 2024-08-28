@@ -285,6 +285,109 @@ ADAPT_PreImpute %>%
 
 ```{r}
 #| label: impute-data
+## Drouput Relationship to Other Variables
+Now we examine whether dropout is related to arm or pretest outcomes. The tests 
+in this section basically show that whether or not a patient dropped out was 
+unrelated to study arm and also unrelated to all 7 of the binary diagnosis 
+outcomes measured at pretest. That suggests there is no evidence of selective 
+dropout. 
+
+### Arm
+
+```{r}
+#| label: Dropout-Arm
+
+x <- ADAPT_PreImpute %>% 
+  xtabs(~Dropout + Arm, data = .) 
+addmargins(x)
+
+fisher.test(x = x)
+```
+
+### GAD_Pre
+
+```{r}
+#| label: Dropout-GAD-Pre
+
+x <- ADAPT_PreImpute %>% 
+  xtabs(~Dropout + GAD_Pre, data = .) 
+addmargins(x)
+
+fisher.test(x = x)
+```
+
+### Social_Pre
+
+```{r}
+#| label: Dropout-Social-Pre
+
+x <- ADAPT_PreImpute %>% 
+  xtabs(~Dropout + Social_Pre, data = .) 
+addmargins(x)
+
+fisher.test(x = x)
+```
+
+### SAD_Pre
+
+```{r}
+#| label: Dropout-SAD-Pre
+
+x <- ADAPT_PreImpute %>% 
+  xtabs(~Dropout + SAD_Pre, data = .) 
+addmargins(x)
+
+fisher.test(x = x)
+```
+
+### Panic_Pre
+
+```{r}
+#| label: Dropout-Panic-Pre
+
+x <- ADAPT_PreImpute %>% 
+  xtabs(~Dropout + Panic_Pre, data = .) 
+addmargins(x)
+
+fisher.test(x = x)
+```
+
+### OCD_Pre
+
+```{r}
+#| label: Dropout-OCD-Pre
+
+x <- ADAPT_PreImpute %>% 
+  xtabs(~Dropout + OCD_Pre, data = .) 
+addmargins(x)
+
+fisher.test(x = x)
+```
+
+### MDD_Pre
+
+```{r}
+#| label: Dropout-MDD-Pre
+
+x <- ADAPT_PreImpute %>% 
+  xtabs(~Dropout + MDD_Pre, data = .) 
+addmargins(x)
+
+fisher.test(x = x)
+```
+
+### Dysthymia_Pre
+
+```{r}
+#| label: Dropout-Dysthymia-Pre
+
+x <- ADAPT_PreImpute %>% 
+  xtabs(~Dropout + Dysthymia_Pre, data = .) 
+addmargins(x)
+
+fisher.test(x = x)
+```
+
 
 # Capture initial default settings for mice to get predictor matrix.
 ini <- mice(data = ADAPT_PreImpute, maxit=0) 
