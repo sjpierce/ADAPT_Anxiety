@@ -402,13 +402,88 @@ The example study was a clinical trial aiming for an intent-to-treat analysis.
 ## Setup Imputation Predictors
 The chunk below sets up the matrix of imputation predictors. 
 
+```{r}
+#| label: imputation-predictors
 
 # Capture initial default settings for mice to get predictor matrix.
 ini <- mice(data = ADAPT_PreImpute, maxit=0) 
 
-# Extract and update the predictor matrix. 
+# Extract and update the predictor matrix. ID can't be used because it doesn't
+# make sense to do so, Dropout seems to be an issue if used to predict the 
+# posttest variables. 
 Predictors <- ini$predictorMatrix 
-Predictors[,'ID'] <- 0 # Exclude ID variable as a predictor
+Predictors[,"ID"] <- 0 
+Predictors[c(scores_post, outcome_post), 'Dropout'] <- 0 
+
+# Don't use other scores/outcomes from posttest, but allow longitudinal 
+# effect of same variable over time.
+Predictors["SCARED_Tot_Pre", 
+           setdiff(c(scores_post, outcome_post), "SCARED_Tot_Post")] = 0
+Predictors["DASS_Tot_Pre", 
+           setdiff(c(scores_post, outcome_post), "DASS_Tot_Post")] = 0
+Predictors["GAD_Pre", 
+           setdiff(c(scores_post, outcome_post), "GAD_Post")] = 0
+Predictors["Social_Pre", 
+           setdiff(c(scores_post, outcome_post), "Social_Post")] = 0
+Predictors["SAD_Pre", 
+           setdiff(c(scores_post, outcome_post), "SAD_Post")] = 0
+Predictors["Panic_Pre", 
+           setdiff(c(scores_post, outcome_post), "Panic_Post")] = 0
+Predictors["OCD_Pre", 
+           setdiff(c(scores_post, outcome_post), "OCD_Post")] = 0
+Predictors["MDD_Pre", 
+           setdiff(c(scores_post, outcome_post), "MDD_Post")] = 0
+Predictors["Dysthymia_Pre", 
+           setdiff(c(scores_post, outcome_post), "Dysthymia_Post")] = 0
+
+# Don't use other scores/outcomes from pretest, but allow longitudinal 
+# effect of same variable over time.
+Predictors["SCARED_Tot_Post", 
+           setdiff(c(scores_pre, outcome_pre), "SCARED_Tot_Pre")] = 0
+Predictors["DASS_Tot_Post", 
+           setdiff(c(scores_pre, outcome_pre), "DASS_Tot_Pre")] = 0
+Predictors["CDI_Tot_Post", 
+           setdiff(c(scores_pre, outcome_pre), "CDI_Tot_Pre")] = 0
+Predictors["FDI_Tot_Post", 
+           setdiff(c(scores_pre, outcome_pre), "FDI_Tot_Pre")] = 0
+Predictors["PCS_Tot_Post", 
+           setdiff(c(scores_pre, outcome_pre), "PCS_Tot_Pre")] = 0
+Predictors["GAD_Post", 
+           setdiff(c(scores_pre, outcome_pre), "GAD_Pre")] = 0
+Predictors["Social_Post", 
+           setdiff(c(scores_pre, outcome_pre), "Social_Pre")] = 0
+Predictors["SAD_Post", 
+           setdiff(c(scores_pre, outcome_pre), "SAD_Pre")] = 0
+Predictors["Panic_Post", 
+           setdiff(c(scores_pre, outcome_pre), "Panic_Pre")] = 0
+Predictors["OCD_Post", 
+           setdiff(c(scores_pre, outcome_pre), "OCD_Pre")] = 0
+Predictors["MDD_Post", 
+           setdiff(c(scores_pre, outcome_pre), "MDD_Pre")] = 0
+Predictors["Dysthymia_Post", 
+           setdiff(c(scores_pre, outcome_pre), "Dysthymia_Pre")] = 0
+
+# Don't allow any predictors of variables that are already complete.
+Predictors[c("ID", "Arm", "Dropout", "Age", "Gender", "race_cat", "CDI_Tot_Pre",
+             "PCS_Tot_Pre", "FDI_Tot_Pre"),] <- 0 
+
+# Avoid using any variable to predict itself. This overwrites any diagonal cells 
+# previously set to 1 by code above.
+diag(Predictors) <- 0
+```
+
+@fig-predictors shows which variables are used as imputation predictors for each 
+variable that has missing data to be imputed. 
+
+```{r}
+#| label: fig-predictors
+#| fig-cap: Imputation Model Predictor Matrix
+#| fig-height: 10
+#| fig-wdith: 10
+
+plot_pred(Predictors, rotate = TRUE)
+```
+
 
 imp <- mice(data = ADAPT_PreImpute, m = 1, pred = Predictors, method = "pmm", 
             seed = 31766)
