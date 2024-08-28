@@ -384,6 +384,24 @@ addmargins(x)
 fisher.test(x = x)
 ```
 
+# Impute Missing Data
+We are using the `mice` package to impute the missing data via predictive mean 
+matching (PMM) [@van_Buuren-RN3962]. Note that some variables already have 
+complete data, so they don't need any imputation predictors at all. Because the 
+sample size is not large, we want to be judicious about which effects we include 
+in the imputation model. The model here is aiming to preserve:
+
+* Correlations between arm, dropout, age, gender and race with each outcome
+* Longitudinal auto-correlations for each outcome from pretest to posttest
+* Cross-sectional correlations between outcomes measured at the same time.
+
+This strategy follows the logic in Section 11.2 in @van_Buuren-RN3962 that 
+described imputation on longitudinal data stored in wide, multivariate format.  
+The example study was a clinical trial aiming for an intent-to-treat analysis. 
+
+## Setup Imputation Predictors
+The chunk below sets up the matrix of imputation predictors. 
+
 
 # Capture initial default settings for mice to get predictor matrix.
 ini <- mice(data = ADAPT_PreImpute, maxit=0) 
