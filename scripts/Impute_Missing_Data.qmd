@@ -243,20 +243,6 @@ ADAPT_PreImpute %>%
   plot_pattern(data = ., rotate = TRUE)
 ```
 
-@fig-corrs shows that there are a variety of small to moderate correlations 
-between variables that may facilitation imputation. 
-
-```{r}
-#| label: fig-corrs
-#| fig-cap: Correlations in ADAPT Pre-Imputation Data
-#| fig-height: 8
-#| fig-wdith: 10
-
-ADAPT_PreImpute %>% 
-  select(-ID) %>% 
-  plot_corr(data = ., rotate = TRUE)
-```
-
 @tbl-flux shows the influx and outflux coefficients for each variable. These are
 measures of connectedness in the data. Influx and outflux summarize the missing
 data pattern and inform creating imputation models. High influx makes it easier
@@ -281,10 +267,20 @@ ADAPT_PreImpute %>%
   kable_styling()
 ```
 
-## Impute Missing Data
+@fig-corrs shows that there are a variety of small to moderate correlations 
+between variables that may facilitation imputation. 
 
 ```{r}
-#| label: impute-data
+#| label: fig-corrs
+#| fig-cap: Correlations in ADAPT Pre-Imputation Data
+#| fig-height: 8
+#| fig-wdith: 10
+
+ADAPT_PreImpute %>% 
+  select(-ID) %>% 
+  plot_corr(data = ., rotate = TRUE)
+```
+
 ## Drouput Relationship to Other Variables
 Now we examine whether dropout is related to arm or pretest outcomes. The tests 
 in this section basically show that whether or not a patient dropped out was 
