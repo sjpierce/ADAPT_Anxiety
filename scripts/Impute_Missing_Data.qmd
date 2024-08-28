@@ -51,8 +51,8 @@ therapy (CBT) treatment for functional abdominal pain in pediatric patients that
 was called ADAPT [@Cunningham-RN8194]. The control group received treatment as 
 usual (TAU).
 
-This file assesses the degree and patterns of missng data in variables we may 
-want for the intended analyses. 
+This file assesses the degree and patterns of missing data in variables we may 
+want for the intended analyses, then performs multiple imputation. 
 
 
 # Setup
