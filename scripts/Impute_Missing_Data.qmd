@@ -1,5 +1,5 @@
 ---
-title: "Assess Missingness in ADAPT Data"
+title: "Impute Missing ADAPT Data"
 subtitle: "Client: Lucy Nguyen. CSTAT Case: C1593"
 author: 
   - name: Steven J. Pierce
@@ -9,8 +9,8 @@ author:
       - name: Michigan State University, Center for Statistical Training and Consulting
 params:
   SourceDir: "scripts/"
-  SourceFile: "Assess_Missingness.qmd"
-  LogFile: "Assess_Missingness_Draft.html"
+  SourceFile: "Impute_Missing_Data.qmd"
+  LogFile: "Impute_Missing_Data_Draft.html"
 bibliography: references.bib
 csl: apa.csl
 date: now
@@ -18,7 +18,7 @@ date-modified: last-modified
 date-format: YYYY-MM-DD HH:mm:ss z
 format: 
   html:
-    output-file: "Assess_Missingness_Draft.html"
+    output-file: "Impute_Missing_Data_Draft.html"
     toc: true
     toc-depth: 3
     toc-location: left
