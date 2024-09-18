@@ -728,7 +728,6 @@ map(c("Dysthymia_Pre", "Dysthymia_Post"), ~ {
   wrap_plots(nrow = 2)
 ```
 
-
 # Save Imputed Data
 
 ``` {r}
@@ -737,7 +736,8 @@ map(c("Dysthymia_Pre", "Dysthymia_Post"), ~ {
 # Copy imputed data to a new object name.
 
 # Save the current working version of the clean data. 
-save(ADAPT_PreImpute, ADAPT_Imputed_Data, file=here("data/ADAPT_Imputed.RData"))
+save(ADAPT_PreImpute, ADAPT_Imputed_Data, 
+     file=here("data/ADAPT_Imputed.RData"))
 ```
 
 The data file can be loaded into R by copying the following code chunk into a
