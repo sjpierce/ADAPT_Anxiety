@@ -98,6 +98,7 @@ library(piercer)      # for all_classes()
 library(janitor)      # for adorn_totals()
 library(mice)         # for mice(), flux(), etc. 
 library(ggmice)       # for plot_pattern(), plot_corr()
+library(patchwork)    # for wrap_plots()
 library(VIM)          # for aggr()
 library(quarto)       # for quarto_version()
 ```
@@ -242,6 +243,9 @@ ADAPT_PreImpute %>%
   select(-ID) %>% 
   plot_pattern(data = ., rotate = TRUE)
 ```
+
+Most of the missingness in the outcomes is attributable to dropout from the 
+study. 
 
 @tbl-flux shows the influx and outflux coefficients for each variable. These are
 measures of connectedness in the data. Influx and outflux summarize the missing
@@ -492,8 +496,9 @@ The chunk below does the actual imputation.
 #| eval: true
 
 # This does the actual imputation. 
-imp <- mice(data = ADAPT_PreImpute, m = 5, pred = Predictors, method = "pmm", 
-            maxit = 20, seed = 31766, printFlag = FALSE)
+ADAPT_Imputed_Data <- mice(data = ADAPT_PreImpute, m = 18, pred = Predictors, 
+                           method = "pmm", maxit = 20, seed = 31766, 
+                           printFlag = FALSE)
 ```
 
 ## Diagnostics: Traceplots
@@ -508,7 +513,8 @@ converged. We need to reach convergence before we can rely on the results.
 #| fig-height: 7
 #| fig-wdith: 7
 
-plot_trace(imp, vrb = c("DASS_Tot_Pre", "SCARED_Tot_Pre"))
+plot_trace(ADAPT_Imputed_Data, 
+           vrb = c("DASS_Tot_Pre", "SCARED_Tot_Pre"))
 ```
 
 ```{r}
@@ -517,8 +523,9 @@ plot_trace(imp, vrb = c("DASS_Tot_Pre", "SCARED_Tot_Pre"))
 #| fig-height: 7
 #| fig-wdith: 7
 
-plot_trace(imp, vrb = c("GAD_Pre", "Social_Pre", "SAD_Pre", "Panic_Pre",
-                        "OCD_Pre", "MDD_Pre", "Dysthymia_Pre"))
+plot_trace(ADAPT_Imputed_Data, 
+           vrb = c("GAD_Pre", "Social_Pre", "SAD_Pre", "Panic_Pre", "OCD_Pre", 
+                   "MDD_Pre", "Dysthymia_Pre"))
 ```
 
 ```{r}
@@ -527,8 +534,9 @@ plot_trace(imp, vrb = c("GAD_Pre", "Social_Pre", "SAD_Pre", "Panic_Pre",
 #| fig-height: 7
 #| fig-wdith: 7
 
-plot_trace(imp, vrb = c("DASS_Tot_Post", "SCARED_Tot_Post", "CDI_Tot_Post", 
-                        "PCS_Tot_Post", "FDI_Tot_Post"))
+plot_trace(ADAPT_Imputed_Data, 
+           vrb = c("DASS_Tot_Post", "SCARED_Tot_Post", "CDI_Tot_Post", 
+                   "PCS_Tot_Post", "FDI_Tot_Post"))
 ```
 
 ```{r}
@@ -537,8 +545,9 @@ plot_trace(imp, vrb = c("DASS_Tot_Post", "SCARED_Tot_Post", "CDI_Tot_Post",
 #| fig-height: 7
 #| fig-wdith: 7
 
-plot_trace(imp, vrb = c("GAD_Post", "Social_Post", "SAD_Post", "Panic_Post",
-                        "OCD_Post", "MDD_Post", "Dysthymia_Post"))
+plot_trace(ADAPT_Imputed_Data, 
+           vrb = c("GAD_Post", "Social_Post", "SAD_Post", "Panic_Post",
+                   "OCD_Post", "MDD_Post", "Dysthymia_Post"))
 ```
 
 ## Diagnostics: Logged Events
@@ -548,57 +557,199 @@ plot_trace(imp, vrb = c("GAD_Post", "Social_Post", "SAD_Post", "Panic_Post",
 #| tbl-cap: Logged Events from Imputation
 
 # Show a table only if there are logged events (which indicate problems)
-if(!is.null(imp$loggedEvents)){
-  imp$loggedEvents %>% 
+if(!is.null(ADAPT_Imputed_Data$loggedEvents)){
+  ADAPT_Imputed_Data$loggedEvents %>% 
   kable() %>% 
   kable_styling() 
 } 
 ```
 
-## Diagnostics: Variable Distributions
+## Diagnostics: Continuous Variable Distributions
 
 ```{r}
-#| label: fig-stripplots
-#| fig-cap: Imputation Strip Plot Comparing Distributionhs of Continuous 
-#|          Variables for 
+#| label: fig-stripplots-DASS
+#| fig-cap: Distributions of Observed and Imputed DASS Scores at Prestest and 
+#|          Posttest by Imputation Number
+#| fig-height: 6
 
-stripplot(x = imp, xlab = "Dataset m (0 is Unimputed, 1-5 are Imputed)")
+map(c("DASS_Tot_Pre", "DASS_Tot_Post"), ~ {
+    ggmice(ADAPT_Imputed_Data, mapping = aes(x = .imp, y = .data[[.x]])) +
+    geom_jitter(height = 0, width = .25) + 
+    scale_y_continuous(limits = c(0, 60), 
+                       breaks = seq(from = 0, to = 60, by = 10)) + 
+    labs(x = "Imputation Number")}) %>%
+  wrap_plots(nrow = 2)
 ```
 
 
 ```{r}
-ggmice(imp, mapping = aes(x = GAD_Post)) + 
-  geom_bar(fill = "white", stat = "count")
+#| label: fig-stripplots-SCARED
+#| fig-cap: Distributions of Observed and Imputed SCARED Scores at Prestest and 
+#|          Posttest by Imputation Number
+#| fig-height: 6
+
+map(c("SCARED_Tot_Pre", "SCARED_Tot_Post"), ~ {
+    ggmice(ADAPT_Imputed_Data, mapping = aes(x = .imp, y = .data[[.x]])) +
+    geom_jitter(height = 0, width = .25) + 
+    scale_y_continuous(limits = c(0, 80), 
+                       breaks = seq(from = 0, to = 80, by = 10)) + 
+    labs(x = "Imputation Number")}) %>%
+  wrap_plots(nrow = 2)
 ```
 
 ```{r}
-ggmice(imp, mapping = aes(x = Social_Post)) + 
-  geom_bar(fill = "white", stat = "count")
+#| label: fig-stripplots-CDI
+#| fig-cap: Distributions of Observed and Imputed CDI Scores at Prestest and 
+#|          Posttest by Imputation Number
+#| fig-height: 6
+
+map(c( "CDI_Tot_Pre", "CDI_Tot_Post"), ~ {
+    ggmice(ADAPT_Imputed_Data, mapping = aes(x = .imp, y = .data[[.x]])) +
+    geom_jitter(height = 0, width = .25) + 
+    scale_y_continuous(limits = c(0, 40), 
+                       breaks = seq(from = 0, to = 40, by = 10)) + 
+    labs(x = "Imputation Number")}) %>%
+  wrap_plots(nrow = 2)
 ```
 
 ```{r}
-ggmice(imp, mapping = aes(x = SAD_Post)) + 
-  geom_bar(fill = "white", stat = "count")
+#| label: fig-stripplots-PCS
+#| fig-cap: Distributions of Observed and Imputed PCS Scores at Prestest and 
+#|          Posttest by Imputation Number
+#| fig-height: 6
+
+map(c("PCS_Tot_Pre", "PCS_Tot_Post"), ~ {
+    ggmice(ADAPT_Imputed_Data, mapping = aes(x = .imp, y = .data[[.x]])) +
+    geom_jitter(height = 0, width = .25) + 
+    scale_y_continuous(limits = c(0, 60), 
+                       breaks = seq(from = 0, to = 60, by = 10)) + 
+    labs(x = "Imputation Number")}) %>%
+  wrap_plots(nrow = 2)
 ```
 
 ```{r}
-ggmice(imp, mapping = aes(x = Panic_Post)) + 
-  geom_bar(fill = "white", stat = "count")
+#| label: fig-stripplots-FDI
+#| fig-cap: Distributions of Observed and Imputed FDI Scores at Prestest and 
+#|          Posttest by Imputation Number
+#| fig-height: 6
+
+map(c("FDI_Tot_Pre", "FDI_Tot_Post"), ~ {
+    ggmice(ADAPT_Imputed_Data, mapping = aes(x = .imp, y = .data[[.x]])) +
+    geom_jitter(height = 0, width = .25) + 
+    scale_y_continuous(limits = c(0, 50), 
+                       breaks = seq(from = 0, to = 50, by = 10)) + 
+    labs(x = "Imputation Number")}) %>%
+  wrap_plots(nrow = 2)
+```
+
+## Diagnostics: Binary Variable Distributions
+
+```{r}
+#| label: fig-barplots-Social
+#| fig-cap: Distributions of Observed and Imputed Social Diagnoses at Pretest 
+#|          and Posttest by Imputation Number
+
+map(c("Social_Pre", "Social_Post"), ~ {
+  ggmice(ADAPT_Imputed_Data, mapping = aes(x = .data[[.x]])) + 
+  geom_bar(fill = "white", stat = "count") + 
+  scale_y_continuous(limits = c(0, 65), breaks = seq(from = 0, to = 60, by = 20)) +
+  facet_wrap(~ .imp, nrow = 1) + 
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))}) %>%
+  wrap_plots(nrow = 2)
 ```
 
 ```{r}
-ggmice(imp, mapping = aes(x = OCD_Post)) + 
-  geom_bar(fill = "white", stat = "count")
+#| label: fig-barplots-SAD
+#| fig-cap: Distributions of Observed and Imputed SAD Diagnoses at Pretest and 
+#|          Posttest by Imputation Number
+
+map(c("SAD_Pre", "SAD_Post"), ~ {
+  ggmice(ADAPT_Imputed_Data, mapping = aes(x = .data[[.x]])) + 
+  geom_bar(fill = "white", stat = "count") + 
+  scale_y_continuous(limits = c(0, 70), breaks = seq(from = 0, to = 70, by = 20)) +
+  facet_wrap(~ .imp, nrow = 1) + 
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))}) %>%
+  wrap_plots(nrow = 2)
 ```
 
 ```{r}
-ggmice(imp, mapping = aes(x = MDD_Post)) + 
-  geom_bar(fill = "white", stat = "count")
+#| label: fig-barplots-Panic
+#| fig-cap: Distributions of Observed and Imputed Panic Diagnoses at Pretest and 
+#|          Posttest by Imputation Number
+
+map(c("Panic_Pre", "Panic_Post"), ~ {
+  ggmice(ADAPT_Imputed_Data, mapping = aes(x = .data[[.x]])) + 
+  geom_bar(fill = "white", stat = "count") + 
+  scale_y_continuous(limits = c(0, 80), breaks = seq(from = 0, to = 80, by = 20)) +
+  facet_wrap(~ .imp, nrow = 1) + 
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))}) %>%
+  wrap_plots(nrow = 2)
 ```
 
 ```{r}
-ggmice(imp, mapping = aes(x = Dysthymia_Post)) + 
-  geom_bar(fill = "white", stat = "count")
+#| label: fig-barplots-OCD
+#| fig-cap: Distributions of Observed and Imputed OCD Diagnoses at Pretest and 
+#|          Posttest by Imputation Number
+
+map(c("OCD_Pre", "OCD_Post"), ~ {
+  ggmice(ADAPT_Imputed_Data, mapping = aes(x = .data[[.x]])) + 
+  geom_bar(fill = "white", stat = "count") + 
+  scale_y_continuous(limits = c(0, 80), breaks = seq(from = 0, to = 80, by = 20)) +
+  facet_wrap(~ .imp, nrow = 1) + 
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))}) %>%
+  wrap_plots(nrow = 2)
+```
+
+```{r}
+#| label: fig-barplots-MDD
+#| fig-cap: Distributions of Observed and Imputed MDD Diagnoses at Pretest and
+#|          Posttest by Imputation Number
+
+map(c("MDD_Pre", "MDD_Post"), ~ {
+  ggmice(ADAPT_Imputed_Data, mapping = aes(x = .data[[.x]])) + 
+  geom_bar(fill = "white", stat = "count") + 
+  scale_y_continuous(limits = c(0, 80), breaks = seq(from = 0, to = 80, by = 20)) +
+  facet_wrap(~ .imp, nrow = 1) + 
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))}) %>%
+  wrap_plots(nrow = 2)
+```
+
+```{r}
+#| label: fig-barplots-Dysthymia
+#| fig-cap: Distributions of Observed and Imputed Dysthymia Diagnoses at Pretest 
+#|          and Posttest by Imputation Number
+
+map(c("Dysthymia_Pre", "Dysthymia_Post"), ~ {
+  ggmice(ADAPT_Imputed_Data, mapping = aes(x = .data[[.x]])) + 
+  geom_bar(fill = "white", stat = "count") + 
+  scale_y_continuous(limits = c(0, 85), breaks = seq(from = 0, to = 80, by = 20)) +
+  facet_wrap(~ .imp, nrow = 1) + 
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))}) %>%
+  wrap_plots(nrow = 2)
+```
+
+
+# Save Imputed Data
+
+``` {r}
+#| label: save-ADAPT-Imputed-Data
+
+# Copy imputed data to a new object name.
+
+# Save the current working version of the clean data. 
+save(ADAPT_PreImpute, ADAPT_Imputed_Data, file=here("data/ADAPT_Imputed.RData"))
+```
+
+The data file can be loaded into R by copying the following code chunk into a
+script, then changing the chunk option from  `eval: false` to `eval: true`, 
+and running the chunk. That will overwrite any objects already in memory that 
+have the same names as the objects being loaded.
+
+``` {r}
+#| label: load-ADAPT-Imputed-Data
+#| eval: false
+
+load(file=here("data/ADAPT_Imputed.RData"))
 ```
 
 # References

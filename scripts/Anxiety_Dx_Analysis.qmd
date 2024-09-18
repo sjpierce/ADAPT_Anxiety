@@ -98,8 +98,11 @@ library(quarto)       # for quarto_version()
 Here we just read in the data we need for the analyses. 
 
 :::{.callout-important}
-This script assumes you have already used `scripts/Import_SPSS_data.qmd` to 
-create the data file `data/ADAPT_Clean.RData`.
+This script assumes you have already used
+
+* `scripts/Import_SPSS_Data.qmd` to create `data/ADAPT_Clean.RData`.
+* `scripts/Impute_Missing_Data.qmd` to create `data/ADAPT_Imputed.RData`.
+
 :::
 
 ``` {r}
@@ -124,6 +127,17 @@ kable(ADAPT_CleanVars, format = "html", booktabs = TRUE, longtable = TRUE) %>%
   kable_styling(bootstrap_options = "striped", 
                 latex_options = c("repeat_header")) 
 ```
+
+``` {r}
+#| label: load-ADAPT-Imputed-Data
+#| eval: false
+
+load(file=here("data/ADAPT_Imputed.RData"))
+```
+
+The `ADAPT_Imputed_Data` object contains the multiply imputed datasets created 
+by `mice()` in the 
+
 
 # Descriptive Statistics {#sec-Descriptive}
 
@@ -393,6 +407,70 @@ ADAPT_Clean_Data %>%
   column_spec(column = 5, bold = TRUE) %>% 
   add_header_above(header = c(" ", "Diagnosed at Posttest" = 3, " "))
 ```
+
+# Logistic Regression on Imputed Data
+Although I originally intended to use log-linear models to test for symmetry and 
+group-specific longitudinal trends toward decreasing proportions of positive 
+diagnoses in the 2 arm x 2 pretest x 2 posttest contingency table for each 
+outcome [@Meiser-RN1847; @von_Eye-RN2750; @von_Eye-RN8661; @von_Eye-RN8660], 
+I was running into difficulty getting that to work. I've decided to fall back to 
+an ANCOVA style logistic regression modeling approach instead where I use arm 
+and pretest to predict each post-test outcome. 
+
+I need to rely on the combination of glm(), mice, broom, and emmeans 
+
+https://www.bioinfo-scrounger.com/archives/mice-lsmean-emmeans/
+
+https://stackoverflow.com/questions/59821087/getting-estimated-means-after-multiple-imputation-using-the-mitml-nlme-geepac
+
+
+https://www.r-bloggers.com/2020/04/estimating-and-testing-glms-with-emmeans/
+
+Given the number of positive posttest diagnoses for the different outcomes is 
+sometimes between 5 and 15, I should not use more than 2 predictors (pretest and 
+posttest) because one usually needs 5-9 events per parameter to get good 
+estimates of regression parameters [@Hosmer-RN2752]. I would like to use age, 
+gender, and race as covariates, but for most of these outcomes that is unlikely 
+to work. For some of them, even having 2 predictors suggests the need for 
+caution in interpreting the results. 
+
+Code below is just to work out basic syntax with the pre-imputation data. I'll 
+need to adapt it to use the imputed datasets. 
+
+```{r}
+#| label: define-G2-test
+
+# Likelihood ratio test for model fit (applies to log-linear models fit by GLM). 
+G2.test <- function(m, digits = 3) {
+             G2   <- deviance(m)
+             p.val <- 1 - pchisq(G2, m$df.residual)
+             x     <- paste("G^2 =", round(G2, digits = digits),
+                            ", df =", m$df.residual,
+                            ", p =", round(p.val, digits = digits))
+             print("Log-likelihood ratio statistic (residual deviance)",
+                   quote = F)
+             print(paste("G^2 and p-value are rounded to", digits, "digits"),
+                   quote = F)
+             print(x, quote = F)}
+```
+
+```{r}
+
+m0 <- glm(SAD_Post ~ SAD_Pre + Arm, 
+          family = binomial, data = ADAPT_PreImpute, 
+          contrasts = list(Arm = "contr.treatment"))
+
+summary(m0)
+
+broom::tidy(m0, conf.int = TRUE, exponentiate = TRUE)
+
+emmeans::emmeans(m0,~Arm,  trans = "response")
+
+emmeans::emmeans(m0,~Arm,  trans = "response") %>% 
+  emmeans::contrast(., method = list(c(-1, 1)), conf.int = TRUE, adjust = "none", 
+                    type = "response") %>% confint()
+```
+
 
 # References
 ::: {#refs}
