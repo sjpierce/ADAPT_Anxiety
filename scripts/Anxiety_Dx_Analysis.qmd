@@ -695,10 +695,10 @@ ADAPT_Clean_Data %>%
   pivot_wider(names_from = Dx_Post, names_prefix = "Dx_Post_", 
               values_from = N, values_fill = 0) %>% 
   mutate(Dx_Pre = as.character(Dx_Pre),
-         Sum = Dx_Post_0 + Dx_Post_1 + Dx_Post_NA) %>% 
+         Sum = Dx_Post_No + Dx_Post_Yes + Dx_Post_NA) %>% 
   adorn_totals(where = "row", name = "Sum") %>%
   kable(format = "html", 
-        col.names = c("Diagnosed at Pretest", "0", "1", "NA", "Sum")) %>% 
+        col.names = c("Diagnosed at Pretest", "No", "Yes", "NA", "Sum")) %>% 
   kable_styling() %>% 
   add_indent(1:3) %>% 
   row_spec(row = 4, bold = TRUE) %>% 
