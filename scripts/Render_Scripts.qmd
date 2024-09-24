@@ -1,0 +1,264 @@
+---
+title: "Re3nder Scripts for ADAPT Analysis of Treatment Effect on Anxiety Diagnoses"
+subtitle: "Client: Lucy Nguyen. CSTAT Case: C1593"
+author: 
+  - name: Steven J. Pierce
+    orcid: 0000-0002-0679-3019
+    email: pierces1@msu.edu
+    affiliations: 
+      - name: Michigan State University, Center for Statistical Training and Consulting
+params:
+  SourceDir: "scripts/"
+  SourceFile: "Render_Scripts.qmd"
+  LogFile: "Render_Scripts.html"
+bibliography: references.bib
+csl: apa.csl
+date: now
+date-modified: last-modified
+date-format: YYYY-MM-DD HH:mm:ss z
+format: 
+  html:
+    toc: true
+    toc-depth: 3
+    toc-location: left
+    number-sections: true
+    number-depth: 3
+    code-fold: true
+    code-tools: true
+    code-line-numbers: false
+    embed-resources: true 
+    anchor-sections: true
+    theme: default
+execute: 
+  eval: true 
+  echo: fenced 
+  output: true 
+  message: true 
+  warning: true 
+  error: true 
+  include: true 
+---
+
+# Overview
+This file runs several scripts to import data, impute missing data, and analyze 
+data for Lucy Nguyen's study called 
+*Effects of How Mental Health Diagnosis in Pediatric Patients with Functional Abdominal Pain Disorders Respond to Cognitive Behavioral Therapy Specifically for Anxiety Symptoms*, 
+which was tracked by CSTAT as Case C1593. The original data come from one of 
+Dr. Natoshia Cunningham's grants. Lucy is one of Dr. Cunningham's students. The
+study was a randomized controlled trial of a tailored cognitive behavioral
+therapy (CBT) treatment for functional abdominal pain in pediatric patients that
+was called ADAPT. The control group received treatment as usual (TAU).
+
+This Quarto script is a convenient way to render various scripts in a sensible 
+order and with useful parameter values. It can be used interactively to render 
+selected scripts, or you can just render this entire file to automate rendering 
+all the scripts shown below. 
+
+# Assumptions
+All the assumptions built into the various scripts being rendered must be 
+satisfied.
+
+# Setup
+This section contains chunks that you must run before trying to use the code 
+chunks below it to interactively render a specific script. 
+
+Global R chunk options are defined in the YAML header but local chunk options 
+will over-ride global options. We can temporarily disable an individual chunk by 
+inserting `#| eval: false` on a line at the top of the chunk. 
+
+## Declare Path
+This next chunk declares the path to this script relative to the project-level 
+root directory. If the file is not in the right location under the project root
+you'll get a warning message. This helps ensure relative paths are all working 
+as expected. 
+
+``` {r}
+#| label: declare-path
+
+# Declare path to this script relative to the project root directory.
+here::i_am(path = paste0(params$SourceDir, params$SourceFile))
+```
+
+Note that `here()` creates a path relative to the location of the 
+`ADAPT_Anxiety.Rproj` file that will be portable across different computers.
+That's why we use that function when specifying file paths throughout the
+script.
+
+## Load Packages
+Below we load some R packages that we'll need  to use. 
+
+```{r}
+#| label: load-packages
+#| include: true
+
+library(devtools)     # for session_info()
+library(here)         # for here()
+library(rmarkdown)    # for pandoc_version(), render()
+library(quarto)       # for quarto_render(), quarto_version()
+
+# Packages loaded below here were used in other scripts rendered below. Loading 
+# them here just makes the Software Information section output from this script 
+# more complete. 
+library(knitr)        # for kable()
+options(kableExtra.latex.load_packages = FALSE)
+library(kableExtra)   # for kable_styling() and formatting tables. 
+library(tidyverse)    # Loads the dplyr, forcats, ggplot2, lubridate, purrr, 
+                      # readr, stringr, tibble, and tidyr packages, for access 
+                      # to %>%, select(), mutate(), etc. 
+library(haven)        # for read_spss().
+library(labelled)     # for set_variable_labels(), var_label()
+library(assertr)      # for verify() and assert()
+library(piercer)      # for all_classes()
+library(janitor)      # for adorn_totals()
+library(mice)         # for mice(), flux(), etc. 
+library(ggmice)       # for plot_pattern(), plot_corr()
+library(patchwork)    # for wrap_plots()
+library(VIM)          # for aggr()
+library(broom)        # for tidy()
+library(emmeans)      # for emmeans(), contrast()
+```
+
+# Import SPSS Data
+
+``` {r}
+#| label: import
+#| eval: true
+
+# Memory garbage collection (for more consistent chunk timing).
+gc()
+# Start chunk timer.
+chunk.start <- proc.time()
+
+OutFile1 <- paste0("Import_SPSS_Data_Draft.html")
+OutFile2 <- paste0("Import_SPSS_Data_", Sys.Date(), ".html")
+
+# Render the script in a fresh R session.
+quarto_render(input = here::here("scripts/Import_SPSS_Data.qmd"), 
+              output_format = "html",
+              execute_params = list(SourceDir = params$SourceDir, 
+                                    SourceFile = "Import_SPSS_Data.qmd", 
+                                    LogFile = OutFile2),
+              execute_dir = here::here("scripts/"),
+              as_job = "auto")
+
+# Date-stamp the file name. 
+file.rename(from = here(paste0("scripts/", OutFile1)), 
+            to = here(paste0("scripts/", OutFile2)))
+
+# Now copy it to the desired path and delete the original file
+move_file(from = OutFile2, 
+          to = "output/", overwrite = TRUE)
+
+# End chunk timer
+chunk.end <- proc.time()
+chunk.end - chunk.start
+```
+
+# Impute Missing Data
+
+``` {r}
+#| label: import
+#| eval: true
+
+# Memory garbage collection (for more consistent chunk timing).
+gc()
+# Start chunk timer.
+chunk.start <- proc.time()
+
+OutFile1 <- paste0("Impute_Missing_Data_Draft.html")
+OutFile2 <- paste0("Impute_Missing_Data_", Sys.Date(), ".html")
+
+# Render the script in a fresh R session.
+quarto_render(input = here::here("scripts/Impute_Missing_Data.qmd"), 
+              output_format = "html",
+              execute_params = list(SourceDir = params$SourceDir, 
+                                    SourceFile = "Impute_Missing_Data.qmd", 
+                                    LogFile = OutFile2),
+              execute_dir = here::here("scripts/"),
+              as_job = "auto")
+
+# Date-stamp the file name. 
+file.rename(from = here(paste0("scripts/", OutFile1)), 
+            to = here(paste0("scripts/", OutFile2)))
+
+# Now copy it to the desired path and delete the original file
+move_file(from = OutFile2, 
+          to = "output/", overwrite = TRUE)
+
+# End chunk timer
+chunk.end <- proc.time()
+chunk.end - chunk.start
+```
+
+# Anxiety Diagnosis Analysis
+
+``` {r}
+#| label: import
+#| eval: true
+
+# Memory garbage collection (for more consistent chunk timing).
+gc()
+# Start chunk timer.
+chunk.start <- proc.time()
+
+OutFile1 <- paste0("Anxiety_Dx_Analysis_Draft.html")
+OutFile2 <- paste0("Anxiety_Dx_Analysis_", Sys.Date(), ".html")
+
+# Render the script in a fresh R session.
+quarto_render(input = here::here("scripts/Anxiety_Dx_Analysis.qmd"), 
+              output_format = "html",
+              execute_params = list(SourceDir = params$SourceDir, 
+                                    SourceFile = "Anxiety_Dx_Analysis.qmd", 
+                                    LogFile = OutFile2),
+              execute_dir = here::here("scripts/"),
+              as_job = "auto")
+
+# Date-stamp the file name. 
+file.rename(from = here(paste0("scripts/", OutFile1)), 
+            to = here(paste0("scripts/", OutFile2)))
+
+# Now copy it to the desired path and delete the original file
+move_file(from = OutFile2, 
+          to = "output/", overwrite = TRUE)
+
+# End chunk timer
+chunk.end <- proc.time()
+chunk.end - chunk.start
+```
+
+# Software Information
+We used [R](https://www.r-project.org/) as our main computing environment and 
+[Quarto](https://quarto.org/) scripts to enhance reproducibility. We used 
+[RStudio](www.rstudio.org) as the editor to interface with R and Quarto. 
+
+- Software chain:
+  **qmd file > RStudio > Quarto > R > knitr > md file > Pandoc > html file**.
+- Source file: **`r params$SourceFile`**
+- Output file: **`r params$LogFile`**
+- [Quarto `r quarto_version()`](https://quarto.org/) runs `*.qmd` files through 
+  [R](https://www.r-project.org/) and [knitr](https://yihui.org/knitr/) to 
+  produce `*.md` markdown files.
+- [Pandoc `r rmarkdown::pandoc_version()`](https://pandoc.org) converts markdown 
+  files (`*.md`) to other formats, including LaTeX (`*.tex`) and HTML (`*.html`) 
+  among others.
+
+This document was generated using the following computational environment and 
+dependencies: 
+
+``` {r}
+#| label: show-version
+#| echo: true
+
+# Get R and R package version numbers in use.
+devtools::session_info()
+```
+
+## Git Details
+The current Git commit details and status are:
+
+``` {r}
+#| label: git-details
+#| echo: true
+
+git_report()
+```
