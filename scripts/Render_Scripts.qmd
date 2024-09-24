@@ -157,7 +157,7 @@ chunk.end - chunk.start
 # Impute Missing Data
 
 ``` {r}
-#| label: import
+#| label: impute
 #| eval: true
 
 # Memory garbage collection (for more consistent chunk timing).
@@ -193,7 +193,7 @@ chunk.end - chunk.start
 # Anxiety Diagnosis Analysis
 
 ``` {r}
-#| label: import
+#| label: analyze
 #| eval: true
 
 # Memory garbage collection (for more consistent chunk timing).
