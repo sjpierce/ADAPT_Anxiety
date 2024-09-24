@@ -1,5 +1,5 @@
 ---
-title: "Re3nder Scripts for ADAPT Analysis of Treatment Effect on Anxiety Diagnoses"
+title: "Render Scripts for ADAPT Analysis of Treatment Effect on Anxiety Diagnoses"
 subtitle: "Client: Lucy Nguyen. CSTAT Case: C1593"
 author: 
   - name: Steven J. Pierce
