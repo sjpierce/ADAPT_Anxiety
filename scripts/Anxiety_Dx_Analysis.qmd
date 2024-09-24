@@ -423,23 +423,6 @@ race as covariates, but for most of these outcomes that is unlikely to work due
 to the low event-rate combined with small sample size. For some of them, even 
 having 2 predictors suggests the need for caution in interpreting the results. 
 
-```{r}
-#| label: define-G2-test
-
-# Likelihood ratio test for model fit (applies to log-linear models fit by GLM). 
-G2.test <- function(m, digits = 3) {
-             G2   <- deviance(m)
-             p.val <- 1 - pchisq(G2, m$df.residual)
-             x     <- paste("G^2 =", round(G2, digits = digits),
-                            ", df =", m$df.residual,
-                            ", p =", round(p.val, digits = digits))
-             print("Log-likelihood ratio statistic (residual deviance)",
-                   quote = F)
-             print(paste("G^2 and p-value are rounded to", digits, "digits"),
-                   quote = F)
-             print(x, quote = F)}
-```
-
 ## Generalized Anxiety Disorder (`GAD_Pre`, `GAD_Post`) 
 
 ```{r}
