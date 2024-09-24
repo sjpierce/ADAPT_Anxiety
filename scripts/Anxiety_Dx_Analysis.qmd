@@ -266,6 +266,68 @@ ADAPT_Clean_Data %>%
   add_header_above(header = c(" ", "Diagnosed at Posttest" = 3, " "))
 ```
 
+```{r}
+#| label: tbl-Social-Change
+#| tbl-cap: "Change in Diagnosis with Social Anxiety Disorder Over Time"
+
+ADAPT_Clean_Data %>% 
+  mutate(Dx_Change = addNA(Social_Change)) %>% 
+  group_by(Dx_Change, .drop = FALSE) %>% 
+  summarise(N = n()) %>% 
+  mutate(Percent = 100*N/sum(N)) %>% 
+  ungroup() %>% 
+  adorn_totals(where = "row", name = "Sum") %>%
+  kable(format = "html", digits = 0,
+        col.names = c("Diagnosis Change", "N", "%")) %>% 
+  kable_styling() %>% 
+  row_spec(row = 5, bold = TRUE)
+```
+
+```{r}
+#| label: tbl-xtabs-Social-Arm
+#| tbl-cap: "Crosstab Diagnosed with Social Anxiety Disorder at Pretest vs Posttest by Arm"
+
+ADAPT_Clean_Data %>% 
+  mutate(Dx_Pre = addNA(Social_Pre),
+         Dx_Post = addNA(Social_Post)) %>% 
+  group_by(Arm, Dx_Pre, Dx_Post, .drop = FALSE) %>% 
+  summarise(N = n()) %>% 
+  ungroup() %>% 
+  pivot_wider(names_from = Dx_Post, names_prefix = "Dx_Post_", 
+              values_from = N, values_fill = 0) %>% 
+  mutate(Dx_Pre = as.character(Dx_Pre),
+         Sum = Dx_Post_No + Dx_Post_Yes + Dx_Post_NA) %>%   
+  group_by(Arm, .drop = FALSE) %>% 
+  group_modify(~ .x %>% adorn_totals(where = "row", name = "Sum")) %>%
+  kable(format = "html", 
+        col.names = c("Arm", "Diagnosed at Pretest", "No", "Yes", "NA", "Sum")) %>% 
+  kable_styling() %>% 
+  row_spec(row = c(4,8), bold = TRUE) %>% 
+  column_spec(column = 6, bold = TRUE) %>% 
+  add_header_above(header = c(" " = 2, "Diagnosed at Posttest" = 3, " ")) %>% 
+  collapse_rows(columns = 1:2, valign = "top", latex_hline = "major", 
+                row_group_label_position = "stack")
+```
+
+```{r}
+#| label: tbl-Social-Change-Arm
+#| tbl-cap: "Change in Diagnosis with Social Anxiety Disorder Over Time by Arm"
+
+ADAPT_Clean_Data %>% 
+  mutate(Dx_Change = addNA(Social_Change)) %>% 
+  group_by(Arm, Dx_Change, .drop = FALSE) %>% 
+  summarise(N = n()) %>% 
+  mutate(Percent = 100*N/sum(N)) %>% 
+  group_modify(~ .x %>% adorn_totals(where = "row")) %>%
+  ungroup() %>% 
+  kable(format = "html", digits = 0,
+        col.names = c("Arm", "Diagnosis Change", "N", "%")) %>% 
+  kable_styling() %>% 
+  row_spec(row = c(5,10), bold = TRUE) %>% 
+  collapse_rows(columns = 1:2, valign = "top", latex_hline = "major", 
+                row_group_label_position = "stack")
+```
+
 ### Separation Anxiety Disorder (`SAD_Pre`, `SAD_Post`)
 
 ```{r}
@@ -290,6 +352,68 @@ ADAPT_Clean_Data %>%
   row_spec(row = 4, bold = TRUE) %>% 
   column_spec(column = 5, bold = TRUE) %>% 
   add_header_above(header = c(" ", "Diagnosed at Posttest" = 3, " "))
+```
+
+```{r}
+#| label: tbl-SAD-Change
+#| tbl-cap: "Change in Diagnosis with SAD Over Time"
+
+ADAPT_Clean_Data %>% 
+  mutate(Dx_Change = addNA(SAD_Change)) %>% 
+  group_by(Dx_Change, .drop = FALSE) %>% 
+  summarise(N = n()) %>% 
+  mutate(Percent = 100*N/sum(N)) %>% 
+  ungroup() %>% 
+  adorn_totals(where = "row", name = "Sum") %>%
+  kable(format = "html", digits = 0,
+        col.names = c("Diagnosis Change", "N", "%")) %>% 
+  kable_styling() %>% 
+  row_spec(row = 5, bold = TRUE)
+```
+
+```{r}
+#| label: tbl-xtabs-SAD-Arm
+#| tbl-cap: "Crosstab Diagnosed with SAD at Pretest vs Posttest by Arm"
+
+ADAPT_Clean_Data %>% 
+  mutate(Dx_Pre = addNA(SAD_Pre),
+         Dx_Post = addNA(SAD_Post)) %>% 
+  group_by(Arm, Dx_Pre, Dx_Post, .drop = FALSE) %>% 
+  summarise(N = n()) %>% 
+  ungroup() %>% 
+  pivot_wider(names_from = Dx_Post, names_prefix = "Dx_Post_", 
+              values_from = N, values_fill = 0) %>% 
+  mutate(Dx_Pre = as.character(Dx_Pre),
+         Sum = Dx_Post_No + Dx_Post_Yes + Dx_Post_NA) %>%   
+  group_by(Arm, .drop = FALSE) %>% 
+  group_modify(~ .x %>% adorn_totals(where = "row", name = "Sum")) %>%
+  kable(format = "html", 
+        col.names = c("Arm", "Diagnosed at Pretest", "No", "Yes", "NA", "Sum")) %>% 
+  kable_styling() %>% 
+  row_spec(row = c(4,8), bold = TRUE) %>% 
+  column_spec(column = 6, bold = TRUE) %>% 
+  add_header_above(header = c(" " = 2, "Diagnosed at Posttest" = 3, " ")) %>% 
+  collapse_rows(columns = 1:2, valign = "top", latex_hline = "major", 
+                row_group_label_position = "stack")
+```
+
+```{r}
+#| label: tbl-SAD-Change-Arm
+#| tbl-cap: "Change in Diagnosis with SAD Over Time by Arm"
+
+ADAPT_Clean_Data %>% 
+  mutate(Dx_Change = addNA(SAD_Change)) %>% 
+  group_by(Arm, Dx_Change, .drop = FALSE) %>% 
+  summarise(N = n()) %>% 
+  mutate(Percent = 100*N/sum(N)) %>% 
+  group_modify(~ .x %>% adorn_totals(where = "row")) %>%
+  ungroup() %>% 
+  kable(format = "html", digits = 0,
+        col.names = c("Arm", "Diagnosis Change", "N", "%")) %>% 
+  kable_styling() %>% 
+  row_spec(row = c(5,10), bold = TRUE) %>% 
+  collapse_rows(columns = 1:2, valign = "top", latex_hline = "major", 
+                row_group_label_position = "stack")
 ```
 
 ### Panic Disoder (`Panic_Pre`, `Panic_Post`)
@@ -318,6 +442,68 @@ ADAPT_Clean_Data %>%
   add_header_above(header = c(" ", "Diagnosed at Posttest" = 3, " "))
 ```
 
+```{r}
+#| label: tbl-Panic-Change
+#| tbl-cap: "Change in Diagnosis with Panic Disorder Over Time"
+
+ADAPT_Clean_Data %>% 
+  mutate(Dx_Change = addNA(Panic_Change)) %>% 
+  group_by(Dx_Change, .drop = FALSE) %>% 
+  summarise(N = n()) %>% 
+  mutate(Percent = 100*N/sum(N)) %>% 
+  ungroup() %>% 
+  adorn_totals(where = "row", name = "Sum") %>%
+  kable(format = "html", digits = 0,
+        col.names = c("Diagnosis Change", "N", "%")) %>% 
+  kable_styling() %>% 
+  row_spec(row = 5, bold = TRUE)
+```
+
+```{r}
+#| label: tbl-xtabs-Panic-Arm
+#| tbl-cap: "Crosstab Diagnosed with Panic Disorder at Pretest vs Posttest by Arm"
+
+ADAPT_Clean_Data %>% 
+  mutate(Dx_Pre = addNA(Panic_Pre),
+         Dx_Post = addNA(Panic_Post)) %>% 
+  group_by(Arm, Dx_Pre, Dx_Post, .drop = FALSE) %>% 
+  summarise(N = n()) %>% 
+  ungroup() %>% 
+  pivot_wider(names_from = Dx_Post, names_prefix = "Dx_Post_", 
+              values_from = N, values_fill = 0) %>% 
+  mutate(Dx_Pre = as.character(Dx_Pre),
+         Sum = Dx_Post_No + Dx_Post_Yes + Dx_Post_NA) %>%   
+  group_by(Arm, .drop = FALSE) %>% 
+  group_modify(~ .x %>% adorn_totals(where = "row", name = "Sum")) %>%
+  kable(format = "html", 
+        col.names = c("Arm", "Diagnosed at Pretest", "No", "Yes", "NA", "Sum")) %>% 
+  kable_styling() %>% 
+  row_spec(row = c(4,8), bold = TRUE) %>% 
+  column_spec(column = 6, bold = TRUE) %>% 
+  add_header_above(header = c(" " = 2, "Diagnosed at Posttest" = 3, " ")) %>% 
+  collapse_rows(columns = 1:2, valign = "top", latex_hline = "major", 
+                row_group_label_position = "stack")
+```
+
+```{r}
+#| label: tbl-Panic-Change-Arm
+#| tbl-cap: "Change in Diagnosis with Panic Disorder Over Time by Arm"
+
+ADAPT_Clean_Data %>% 
+  mutate(Dx_Change = addNA(Panic_Change)) %>% 
+  group_by(Arm, Dx_Change, .drop = FALSE) %>% 
+  summarise(N = n()) %>% 
+  mutate(Percent = 100*N/sum(N)) %>% 
+  group_modify(~ .x %>% adorn_totals(where = "row")) %>%
+  ungroup() %>% 
+  kable(format = "html", digits = 0,
+        col.names = c("Arm", "Diagnosis Change", "N", "%")) %>% 
+  kable_styling() %>% 
+  row_spec(row = c(5,10), bold = TRUE) %>% 
+  collapse_rows(columns = 1:2, valign = "top", latex_hline = "major", 
+                row_group_label_position = "stack")
+```
+
 ### Obsessive Compusive Disorder (`OCD_Pre`, `OCD_Post`)
 
 ```{r}
@@ -342,6 +528,68 @@ ADAPT_Clean_Data %>%
   row_spec(row = 4, bold = TRUE) %>% 
   column_spec(column = 5, bold = TRUE) %>% 
   add_header_above(header = c(" ", "Diagnosed at Posttest" = 3, " "))
+```
+
+```{r}
+#| label: tbl-OCD-Change
+#| tbl-cap: "Change in Diagnosis with OCD Over Time"
+
+ADAPT_Clean_Data %>% 
+  mutate(Dx_Change = addNA(OCD_Change)) %>% 
+  group_by(Dx_Change, .drop = FALSE) %>% 
+  summarise(N = n()) %>% 
+  mutate(Percent = 100*N/sum(N)) %>% 
+  ungroup() %>% 
+  adorn_totals(where = "row", name = "Sum") %>%
+  kable(format = "html", digits = 0,
+        col.names = c("Diagnosis Change", "N", "%")) %>% 
+  kable_styling() %>% 
+  row_spec(row = 5, bold = TRUE)
+```
+
+```{r}
+#| label: tbl-xtabs-OCD-Arm
+#| tbl-cap: "Crosstab Diagnosed with OCD at Pretest vs Posttest by Arm"
+
+ADAPT_Clean_Data %>% 
+  mutate(Dx_Pre = addNA(OCD_Pre),
+         Dx_Post = addNA(OCD_Post)) %>% 
+  group_by(Arm, Dx_Pre, Dx_Post, .drop = FALSE) %>% 
+  summarise(N = n()) %>% 
+  ungroup() %>% 
+  pivot_wider(names_from = Dx_Post, names_prefix = "Dx_Post_", 
+              values_from = N, values_fill = 0) %>% 
+  mutate(Dx_Pre = as.character(Dx_Pre),
+         Sum = Dx_Post_No + Dx_Post_Yes + Dx_Post_NA) %>%   
+  group_by(Arm, .drop = FALSE) %>% 
+  group_modify(~ .x %>% adorn_totals(where = "row", name = "Sum")) %>%
+  kable(format = "html", 
+        col.names = c("Arm", "Diagnosed at Pretest", "No", "Yes", "NA", "Sum")) %>% 
+  kable_styling() %>% 
+  row_spec(row = c(4,8), bold = TRUE) %>% 
+  column_spec(column = 6, bold = TRUE) %>% 
+  add_header_above(header = c(" " = 2, "Diagnosed at Posttest" = 3, " ")) %>% 
+  collapse_rows(columns = 1:2, valign = "top", latex_hline = "major", 
+                row_group_label_position = "stack")
+```
+
+```{r}
+#| label: tbl-OCD-Change-Arm
+#| tbl-cap: "Change in Diagnosis with OCD Over Time by Arm"
+
+ADAPT_Clean_Data %>% 
+  mutate(Dx_Change = addNA(OCD_Change)) %>% 
+  group_by(Arm, Dx_Change, .drop = FALSE) %>% 
+  summarise(N = n()) %>% 
+  mutate(Percent = 100*N/sum(N)) %>% 
+  group_modify(~ .x %>% adorn_totals(where = "row")) %>%
+  ungroup() %>% 
+  kable(format = "html", digits = 0,
+        col.names = c("Arm", "Diagnosis Change", "N", "%")) %>% 
+  kable_styling() %>% 
+  row_spec(row = c(5,10), bold = TRUE) %>% 
+  collapse_rows(columns = 1:2, valign = "top", latex_hline = "major", 
+                row_group_label_position = "stack")
 ```
 
 ### Major Depressive Disorder (`MDD_Pre`, `MDD_Post`)
@@ -370,11 +618,73 @@ ADAPT_Clean_Data %>%
   add_header_above(header = c(" ", "Diagnosed at Posttest" = 3, " "))
 ```
 
+```{r}
+#| label: tbl-MDD-Change
+#| tbl-cap: "Change in Diagnosis with GAD Over Time"
+
+ADAPT_Clean_Data %>% 
+  mutate(Dx_Change = addNA(MDD_Change)) %>% 
+  group_by(Dx_Change, .drop = FALSE) %>% 
+  summarise(N = n()) %>% 
+  mutate(Percent = 100*N/sum(N)) %>% 
+  ungroup() %>% 
+  adorn_totals(where = "row", name = "Sum") %>%
+  kable(format = "html", digits = 0,
+        col.names = c("Diagnosis Change", "N", "%")) %>% 
+  kable_styling() %>% 
+  row_spec(row = 5, bold = TRUE)
+```
+
+```{r}
+#| label: tbl-xtabs-MDD-Arm
+#| tbl-cap: "Crosstab Diagnosed with MDD at Pretest vs Posttest by Arm"
+
+ADAPT_Clean_Data %>% 
+  mutate(Dx_Pre = addNA(MDD_Pre),
+         Dx_Post = addNA(MDD_Post)) %>% 
+  group_by(Arm, Dx_Pre, Dx_Post, .drop = FALSE) %>% 
+  summarise(N = n()) %>% 
+  ungroup() %>% 
+  pivot_wider(names_from = Dx_Post, names_prefix = "Dx_Post_", 
+              values_from = N, values_fill = 0) %>% 
+  mutate(Dx_Pre = as.character(Dx_Pre),
+         Sum = Dx_Post_No + Dx_Post_Yes + Dx_Post_NA) %>%   
+  group_by(Arm, .drop = FALSE) %>% 
+  group_modify(~ .x %>% adorn_totals(where = "row", name = "Sum")) %>%
+  kable(format = "html", 
+        col.names = c("Arm", "Diagnosed at Pretest", "No", "Yes", "NA", "Sum")) %>% 
+  kable_styling() %>% 
+  row_spec(row = c(4,8), bold = TRUE) %>% 
+  column_spec(column = 6, bold = TRUE) %>% 
+  add_header_above(header = c(" " = 2, "Diagnosed at Posttest" = 3, " ")) %>% 
+  collapse_rows(columns = 1:2, valign = "top", latex_hline = "major", 
+                row_group_label_position = "stack")
+```
+
+```{r}
+#| label: tbl-MDD-Change-Arm
+#| tbl-cap: "Change in Diagnosis with MDD Over Time by Arm"
+
+ADAPT_Clean_Data %>% 
+  mutate(Dx_Change = addNA(MDD_Change)) %>% 
+  group_by(Arm, Dx_Change, .drop = FALSE) %>% 
+  summarise(N = n()) %>% 
+  mutate(Percent = 100*N/sum(N)) %>% 
+  group_modify(~ .x %>% adorn_totals(where = "row")) %>%
+  ungroup() %>% 
+  kable(format = "html", digits = 0,
+        col.names = c("Arm", "Diagnosis Change", "N", "%")) %>% 
+  kable_styling() %>% 
+  row_spec(row = c(5,10), bold = TRUE) %>% 
+  collapse_rows(columns = 1:2, valign = "top", latex_hline = "major", 
+                row_group_label_position = "stack")
+```
+
 ### Dysthymia (`Dysthymia_Pre`, `Dysthymia_Post`)
 
 ```{r}
 #| label: tbl-xtabs-Dysthymia
-#| tbl-cap: "Crosstab Diagnosed with OCD at Pretest vs Posttest"
+#| tbl-cap: "Crosstab Diagnosed with Dysthymia at Pretest vs Posttest"
 
 ADAPT_Clean_Data %>% 
   mutate(Dx_Pre = addNA(Dysthymia_Pre),
@@ -394,6 +704,68 @@ ADAPT_Clean_Data %>%
   row_spec(row = 4, bold = TRUE) %>% 
   column_spec(column = 5, bold = TRUE) %>% 
   add_header_above(header = c(" ", "Diagnosed at Posttest" = 3, " "))
+```
+
+```{r}
+#| label: tbl-Dysthymia-Change
+#| tbl-cap: "Change in Diagnosis with Dysthymia Over Time"
+
+ADAPT_Clean_Data %>% 
+  mutate(Dx_Change = addNA(Dysthymia_Change)) %>% 
+  group_by(Dx_Change, .drop = FALSE) %>% 
+  summarise(N = n()) %>% 
+  mutate(Percent = 100*N/sum(N)) %>% 
+  ungroup() %>% 
+  adorn_totals(where = "row", name = "Sum") %>%
+  kable(format = "html", digits = 0,
+        col.names = c("Diagnosis Change", "N", "%")) %>% 
+  kable_styling() %>% 
+  row_spec(row = 5, bold = TRUE)
+```
+
+```{r}
+#| label: tbl-xtabs-Dysthymia-Arm
+#| tbl-cap: "Crosstab Diagnosed with Dysthymia at Pretest vs Posttest by Arm"
+
+ADAPT_Clean_Data %>% 
+  mutate(Dx_Pre = addNA(Dysthymia_Pre),
+         Dx_Post = addNA(Dysthymia_Post)) %>% 
+  group_by(Arm, Dx_Pre, Dx_Post, .drop = FALSE) %>% 
+  summarise(N = n()) %>% 
+  ungroup() %>% 
+  pivot_wider(names_from = Dx_Post, names_prefix = "Dx_Post_", 
+              values_from = N, values_fill = 0) %>% 
+  mutate(Dx_Pre = as.character(Dx_Pre),
+         Sum = Dx_Post_No + Dx_Post_Yes + Dx_Post_NA) %>%   
+  group_by(Arm, .drop = FALSE) %>% 
+  group_modify(~ .x %>% adorn_totals(where = "row", name = "Sum")) %>%
+  kable(format = "html", 
+        col.names = c("Arm", "Diagnosed at Pretest", "No", "Yes", "NA", "Sum")) %>% 
+  kable_styling() %>% 
+  row_spec(row = c(4,8), bold = TRUE) %>% 
+  column_spec(column = 6, bold = TRUE) %>% 
+  add_header_above(header = c(" " = 2, "Diagnosed at Posttest" = 3, " ")) %>% 
+  collapse_rows(columns = 1:2, valign = "top", latex_hline = "major", 
+                row_group_label_position = "stack")
+```
+
+```{r}
+#| label: tbl-Dysthymia-Change-Arm
+#| tbl-cap: "Change in Diagnosis with Dysthymia Over Time by Arm"
+
+ADAPT_Clean_Data %>% 
+  mutate(Dx_Change = addNA(Dysthymia_Change)) %>% 
+  group_by(Arm, Dx_Change, .drop = FALSE) %>% 
+  summarise(N = n()) %>% 
+  mutate(Percent = 100*N/sum(N)) %>% 
+  group_modify(~ .x %>% adorn_totals(where = "row")) %>%
+  ungroup() %>% 
+  kable(format = "html", digits = 0,
+        col.names = c("Arm", "Diagnosis Change", "N", "%")) %>% 
+  kable_styling() %>% 
+  row_spec(row = c(5,10), bold = TRUE) %>% 
+  collapse_rows(columns = 1:2, valign = "top", latex_hline = "major", 
+                row_group_label_position = "stack")
 ```
 
 # Logistic Regression on Imputed Data
