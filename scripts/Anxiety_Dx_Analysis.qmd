@@ -833,7 +833,7 @@ FN <- paste("Pooled results after multiple imputation by chained equations",
             "riv, relative increase in variance due to noneresponse;",
             "ubar, mean of the variances.")
 
-left_join(CIs_GAD, OR_GAD, by = join_by(term)) %>% 
+parameters_GAD <- left_join(CIs_GAD, OR_GAD, by = join_by(term)) %>% 
   rename(Term = term, 
          Estimate = estimate, 
          SE = std.error,
@@ -841,7 +841,9 @@ left_join(CIs_GAD, OR_GAD, by = join_by(term)) %>%
          p = p.value, 
          Est.LL = conf.low, 
          Est.UL = conf.high) %>% 
-  relocate(Term, Estimate, SE, Est.LL, Est.UL, OR, OR.LL, OR.UL, z, p) %>% 
+  relocate(Term, Estimate, SE, Est.LL, Est.UL, OR, OR.LL, OR.UL, z, p) 
+  
+parameters_GAD %>% 
   kable(., format = "html", booktabs = TRUE, digits = 3) %>% 
   kable_styling() %>% 
   add_header_above(header = c(" " = 3, "95% CI" = 2, " ", "OR 95% CI" = 2, 
@@ -851,25 +853,18 @@ left_join(CIs_GAD, OR_GAD, by = join_by(term)) %>%
 ```
 
 ```{r}
-#| label: tbl-emm-GAD
-#| tbl-cap: Estimated Marginal Means for GAD at Posttest
+#| label: emm-GAD
 
-FN <- paste()
 emm_GAD <- emmeans(fit_GAD, ~ Arm, regrid = "response") 
-emm_GAD
-
-plot(emm_GAD, comparisons = TRUE)
+emm_GAD 
 ```
 
 ```{r}
-#| label: tbl-emmc-GAD
-#| tbl-cap: Difference Between Marginal Means for the Arms on GAD at Posttest
+#| label: emmc-GAD
 
 emmc_test_GAD <- contrast(emm_GAD, method = "pairwise", conf.int = TRUE, 
            adjust = "none", type = "response") 
 emmc_test_GAD
-
-plot(emmc_test_GAD)
 
 emmc_CI_GAD <- confint(emmc_test_GAD)
 emmc_CI_GAD
@@ -877,14 +872,655 @@ emmc_CI_GAD
 
 ## Social Anxiety Disorder (`Social_Pre`, `Social_Post`)
 
+```{r}
+#| label: fit-model-Social
+
+# Fit the set of models on imputed data. 
+fit_Social <- with(ADAPT_Imputed_Data,
+                glm(Social_Post ~ Social_Pre + Arm, family = binomial))
+
+# Pooled estimates across the set of models. 
+pooled_Social <- pool(fit_Social)
+
+# Extract pooled parameter estimates and CIs (on logit scale)
+CIs_Social <- tidy(pooled_Social, conf.int = TRUE, exponentiate = FALSE) 
+
+# Extract odds-ratios and CIs. 
+OR_Social <- tidy(pooled_Social, conf.int = TRUE, exponentiate = TRUE) %>% 
+  rename(OR = estimate, OR.LL = conf.low, OR.UL = conf.high) %>% 
+  select(term, OR, OR.LL, OR.UL)
+```
+
+```{r}
+#| label: tbl-parameters-Social
+#| tbl-cap: Pooled Logistic Regression Model Parameters for Social
+#| results: asis
+
+FN <- paste("Pooled results after multiple imputation by chained equations",
+            "(MICE) with predictive mean matching (PMM).",
+            "b, between imputation variance;",
+            "df, degrees of freedom for hypothesis testing with Barnard-Rubin",
+            "adjustment;",
+            "dfcom, degrees of freedom for a complete data analysis;",
+            "fmi, fraction of missing information;",
+            "labmda, proportion of total variance due to missingness;",
+            "m, number of imputed datasets;",
+            "riv, relative increase in variance due to noneresponse;",
+            "ubar, mean of the variances.")
+
+parameters_Social <- left_join(CIs_Social, OR_Social, by = join_by(term)) %>% 
+  rename(Term = term, 
+         Estimate = estimate, 
+         SE = std.error,
+         z = statistic,
+         p = p.value, 
+         Est.LL = conf.low, 
+         Est.UL = conf.high) %>% 
+  relocate(Term, Estimate, SE, Est.LL, Est.UL, OR, OR.LL, OR.UL, z, p) 
+  
+parameters_Social %>% 
+  kable(., format = "html", booktabs = TRUE, digits = 3) %>% 
+  kable_styling() %>% 
+  add_header_above(header = c(" " = 3, "95% CI" = 2, " ", "OR 95% CI" = 2, 
+                              "Wald Test" = 2, "Imputation Details" = 8)) %>% 
+  footnote(general = FN, footnote_as_chunk = TRUE) %>% 
+  cat()
+```
+
+```{r}
+#| label: emm-Social
+
+emm_Social <- emmeans(fit_Social, ~ Arm, regrid = "response") 
+emm_Social 
+```
+
+```{r}
+#| label: emmc-Social
+
+emmc_test_Social <- contrast(emm_Social, method = "pairwise", conf.int = TRUE, 
+           adjust = "none", type = "response") 
+emmc_test_Social
+
+emmc_CI_Social <- confint(emmc_test_Social)
+emmc_CI_Social
+```
+
 ## Separation Anxiety Disorder (`SAD_Pre`, `SAD_Post`)
+
+```{r}
+#| label: fit-model-SAD
+
+# Fit the set of models on imputed data. 
+fit_SAD <- with(ADAPT_Imputed_Data,
+                glm(SAD_Post ~ SAD_Pre + Arm, family = binomial))
+
+# Pooled estimates across the set of models. 
+pooled_SAD <- pool(fit_SAD)
+
+# Extract pooled parameter estimates and CIs (on logit scale)
+CIs_SAD <- tidy(pooled_SAD, conf.int = TRUE, exponentiate = FALSE) 
+
+# Extract odds-ratios and CIs. 
+OR_SAD <- tidy(pooled_SAD, conf.int = TRUE, exponentiate = TRUE) %>% 
+  rename(OR = estimate, OR.LL = conf.low, OR.UL = conf.high) %>% 
+  select(term, OR, OR.LL, OR.UL)
+```
+
+```{r}
+#| label: tbl-parameters-SAD
+#| tbl-cap: Pooled Logistic Regression Model Parameters for SAD
+#| results: asis
+
+FN <- paste("Pooled results after multiple imputation by chained equations",
+            "(MICE) with predictive mean matching (PMM).",
+            "b, between imputation variance;",
+            "df, degrees of freedom for hypothesis testing with Barnard-Rubin",
+            "adjustment;",
+            "dfcom, degrees of freedom for a complete data analysis;",
+            "fmi, fraction of missing information;",
+            "labmda, proportion of total variance due to missingness;",
+            "m, number of imputed datasets;",
+            "riv, relative increase in variance due to noneresponse;",
+            "ubar, mean of the variances.")
+
+parameters_SAD <- left_join(CIs_SAD, OR_SAD, by = join_by(term)) %>% 
+  rename(Term = term, 
+         Estimate = estimate, 
+         SE = std.error,
+         z = statistic,
+         p = p.value, 
+         Est.LL = conf.low, 
+         Est.UL = conf.high) %>% 
+  relocate(Term, Estimate, SE, Est.LL, Est.UL, OR, OR.LL, OR.UL, z, p) 
+  
+parameters_SAD %>% 
+  kable(., format = "html", booktabs = TRUE, digits = 3) %>% 
+  kable_styling() %>% 
+  add_header_above(header = c(" " = 3, "95% CI" = 2, " ", "OR 95% CI" = 2, 
+                              "Wald Test" = 2, "Imputation Details" = 8)) %>% 
+  footnote(general = FN, footnote_as_chunk = TRUE) %>% 
+  cat()
+```
+
+```{r}
+#| label: emm-SAD
+
+emm_SAD <- emmeans(fit_SAD, ~ Arm, regrid = "response") 
+emm_SAD 
+```
+
+```{r}
+#| label: emmc-SAD
+
+emmc_test_SAD <- contrast(emm_SAD, method = "pairwise", conf.int = TRUE, 
+           adjust = "none", type = "response") 
+emmc_test_SAD
+
+emmc_CI_SAD <- confint(emmc_test_SAD)
+emmc_CI_SAD
+```
 
 ## Panic Disoder (`Panic_Pre`, `Panic_Post`)
 
+```{r}
+#| label: fit-model-Panic
+
+# Fit the set of models on imputed data. 
+fit_Panic <- with(ADAPT_Imputed_Data,
+                glm(Panic_Post ~ Panic_Pre + Arm, family = binomial))
+
+# Pooled estimates across the set of models. 
+pooled_Panic <- pool(fit_Panic)
+
+# Extract pooled parameter estimates and CIs (on logit scale)
+CIs_Panic <- tidy(pooled_Panic, conf.int = TRUE, exponentiate = FALSE) 
+
+# Extract odds-ratios and CIs. 
+OR_Panic <- tidy(pooled_Panic, conf.int = TRUE, exponentiate = TRUE) %>% 
+  rename(OR = estimate, OR.LL = conf.low, OR.UL = conf.high) %>% 
+  select(term, OR, OR.LL, OR.UL)
+```
+
+```{r}
+#| label: tbl-parameters-Panic
+#| tbl-cap: Pooled Logistic Regression Model Parameters for Panic
+#| results: asis
+
+FN <- paste("Pooled results after multiple imputation by chained equations",
+            "(MICE) with predictive mean matching (PMM).",
+            "b, between imputation variance;",
+            "df, degrees of freedom for hypothesis testing with Barnard-Rubin",
+            "adjustment;",
+            "dfcom, degrees of freedom for a complete data analysis;",
+            "fmi, fraction of missing information;",
+            "labmda, proportion of total variance due to missingness;",
+            "m, number of imputed datasets;",
+            "riv, relative increase in variance due to noneresponse;",
+            "ubar, mean of the variances.")
+
+parameters_Panic <- left_join(CIs_Panic, OR_Panic, by = join_by(term)) %>% 
+  rename(Term = term, 
+         Estimate = estimate, 
+         SE = std.error,
+         z = statistic,
+         p = p.value, 
+         Est.LL = conf.low, 
+         Est.UL = conf.high) %>% 
+  relocate(Term, Estimate, SE, Est.LL, Est.UL, OR, OR.LL, OR.UL, z, p) 
+  
+parameters_Panic %>% 
+  kable(., format = "html", booktabs = TRUE, digits = 3) %>% 
+  kable_styling() %>% 
+  add_header_above(header = c(" " = 3, "95% CI" = 2, " ", "OR 95% CI" = 2, 
+                              "Wald Test" = 2, "Imputation Details" = 8)) %>% 
+  footnote(general = FN, footnote_as_chunk = TRUE) %>% 
+  cat()
+```
+
+```{r}
+#| label: emm-Panic
+
+emm_Panic <- emmeans(fit_Panic, ~ Arm, regrid = "response") 
+emm_Panic 
+```
+
+```{r}
+#| label: emmc-Panic
+
+emmc_test_Panic <- contrast(emm_Panic, method = "pairwise", conf.int = TRUE, 
+           adjust = "none", type = "response") 
+emmc_test_Panic
+
+emmc_CI_Panic <- confint(emmc_test_Panic)
+emmc_CI_Panic
+```
+
 ## Obsessive Compusive Disorder (`OCD_Pre`, `OCD_Post`)
+
+```{r}
+#| label: fit-model-OCD
+
+# Fit the set of models on imputed data. 
+fit_OCD <- with(ADAPT_Imputed_Data,
+                glm(OCD_Post ~ OCD_Pre + Arm, family = binomial))
+
+# Pooled estimates across the set of models. 
+pooled_OCD <- pool(fit_OCD)
+
+# Extract pooled parameter estimates and CIs (on logit scale)
+CIs_OCD <- tidy(pooled_OCD, conf.int = TRUE, exponentiate = FALSE) 
+
+# Extract odds-ratios and CIs. 
+OR_OCD <- tidy(pooled_OCD, conf.int = TRUE, exponentiate = TRUE) %>% 
+  rename(OR = estimate, OR.LL = conf.low, OR.UL = conf.high) %>% 
+  select(term, OR, OR.LL, OR.UL)
+```
+
+```{r}
+#| label: tbl-parameters-OCD
+#| tbl-cap: Pooled Logistic Regression Model Parameters for OCD
+#| results: asis
+
+FN <- paste("Pooled results after multiple imputation by chained equations",
+            "(MICE) with predictive mean matching (PMM).",
+            "b, between imputation variance;",
+            "df, degrees of freedom for hypothesis testing with Barnard-Rubin",
+            "adjustment;",
+            "dfcom, degrees of freedom for a complete data analysis;",
+            "fmi, fraction of missing information;",
+            "labmda, proportion of total variance due to missingness;",
+            "m, number of imputed datasets;",
+            "riv, relative increase in variance due to noneresponse;",
+            "ubar, mean of the variances.")
+
+parameters_OCD <- left_join(CIs_OCD, OR_OCD, by = join_by(term)) %>% 
+  rename(Term = term, 
+         Estimate = estimate, 
+         SE = std.error,
+         z = statistic,
+         p = p.value, 
+         Est.LL = conf.low, 
+         Est.UL = conf.high) %>% 
+  relocate(Term, Estimate, SE, Est.LL, Est.UL, OR, OR.LL, OR.UL, z, p) 
+  
+parameters_OCD %>% 
+  kable(., format = "html", booktabs = TRUE, digits = 3) %>% 
+  kable_styling() %>% 
+  add_header_above(header = c(" " = 3, "95% CI" = 2, " ", "OR 95% CI" = 2, 
+                              "Wald Test" = 2, "Imputation Details" = 8)) %>% 
+  footnote(general = FN, footnote_as_chunk = TRUE) %>% 
+  cat()
+```
+
+:::{.callout-important}
+The extremely large standard errors for the intercept and OCD_Pre terms in  
+@tbl-parameters-OCD are a sign that we have encountered a problem with 
+separation [@Heinze-RN1125]. Brielfy stated, this happens when there is very 
+little variability in the outcome at some combinations of values on the 
+predictors. That causes problems with maximum likelihood estimation of the model 
+parameters. While there is a potential solution to that via penalized 
+estimation, it may be simpler just to not report this outcome. 
+
+Look at the raw descriptive data in @tbl-OCD-Change and @tbl-OCD-Change-Arm. 
+They show that *none of the patients in the study ever worsened*. For all the
+other outcomes, at least a few people did worsen, even if it was only in one
+study arm. So, the OCD outcome is unusual in that respect. 
+
+Because the model is not producing trustorthy results, I am disabling the code 
+below that would have estimated the marginal means and the difference between 
+them for this outcome. 
+:::
+
+
+```{r}
+#| label: emm-OCD
+#| eval: false
+
+emm_OCD <- emmeans(fit_OCD, ~ Arm, regrid = "response") 
+emm_OCD 
+```
+
+```{r}
+#| label: emmc-OCD
+#| eval: false
+
+emmc_test_OCD <- contrast(emm_OCD, method = "pairwise", conf.int = TRUE, 
+           adjust = "none", type = "response") 
+emmc_test_OCD
+
+emmc_CI_OCD <- confint(emmc_test_OCD)
+emmc_CI_OCD
+```
 
 ## Major Depressive Disorder (`MDD_Pre`, `MDD_Post`)
 
+```{r}
+#| label: fit-model-MDD
+
+# Fit the set of models on imputed data. 
+fit_MDD <- with(ADAPT_Imputed_Data,
+                glm(MDD_Post ~ MDD_Pre + Arm, family = binomial))
+
+# Pooled estimates across the set of models. 
+pooled_MDD <- pool(fit_MDD)
+
+# Extract pooled parameter estimates and CIs (on logit scale)
+CIs_MDD <- tidy(pooled_MDD, conf.int = TRUE, exponentiate = FALSE) 
+
+# Extract odds-ratios and CIs. 
+OR_MDD <- tidy(pooled_MDD, conf.int = TRUE, exponentiate = TRUE) %>% 
+  rename(OR = estimate, OR.LL = conf.low, OR.UL = conf.high) %>% 
+  select(term, OR, OR.LL, OR.UL)
+```
+
+```{r}
+#| label: tbl-parameters-MDD
+#| tbl-cap: Pooled Logistic Regression Model Parameters for MDD
+#| results: asis
+
+FN <- paste("Pooled results after multiple imputation by chained equations",
+            "(MICE) with predictive mean matching (PMM).",
+            "b, between imputation variance;",
+            "df, degrees of freedom for hypothesis testing with Barnard-Rubin",
+            "adjustment;",
+            "dfcom, degrees of freedom for a complete data analysis;",
+            "fmi, fraction of missing information;",
+            "labmda, proportion of total variance due to missingness;",
+            "m, number of imputed datasets;",
+            "riv, relative increase in variance due to noneresponse;",
+            "ubar, mean of the variances.")
+
+parameters_MDD <- left_join(CIs_MDD, OR_MDD, by = join_by(term)) %>% 
+  rename(Term = term, 
+         Estimate = estimate, 
+         SE = std.error,
+         z = statistic,
+         p = p.value, 
+         Est.LL = conf.low, 
+         Est.UL = conf.high) %>% 
+  relocate(Term, Estimate, SE, Est.LL, Est.UL, OR, OR.LL, OR.UL, z, p) 
+  
+parameters_MDD %>% 
+  kable(., format = "html", booktabs = TRUE, digits = 3) %>% 
+  kable_styling() %>% 
+  add_header_above(header = c(" " = 3, "95% CI" = 2, " ", "OR 95% CI" = 2, 
+                              "Wald Test" = 2, "Imputation Details" = 8)) %>% 
+  footnote(general = FN, footnote_as_chunk = TRUE) %>% 
+  cat()
+```
+
+```{r}
+#| label: emm-MDD
+
+emm_MDD <- emmeans(fit_MDD, ~ Arm, regrid = "response") 
+emm_MDD 
+```
+
+```{r}
+#| label: emmc-MDD
+
+emmc_test_MDD <- contrast(emm_MDD, method = "pairwise", conf.int = TRUE, 
+           adjust = "none", type = "response") 
+emmc_test_MDD
+
+emmc_CI_MDD <- confint(emmc_test_MDD)
+emmc_CI_MDD
+```
+
+## Dysthymia (`Dysthymia_Pre`, `Dysthymia_Post`)
+
+```{r}
+#| label: fit-model-Dysthymia
+
+# Fit the set of models on imputed data. 
+fit_Dysthymia <- with(ADAPT_Imputed_Data,
+                glm(Dysthymia_Post ~ Dysthymia_Pre + Arm, family = binomial))
+
+# Pooled estimates across the set of models. 
+pooled_Dysthymia <- pool(fit_Dysthymia)
+
+# Extract pooled parameter estimates and CIs (on logit scale)
+CIs_Dysthymia <- tidy(pooled_Dysthymia, conf.int = TRUE, exponentiate = FALSE) 
+
+# Extract odds-ratios and CIs. 
+OR_Dysthymia <- tidy(pooled_Dysthymia, conf.int = TRUE, exponentiate = TRUE) %>% 
+  rename(OR = estimate, OR.LL = conf.low, OR.UL = conf.high) %>% 
+  select(term, OR, OR.LL, OR.UL)
+```
+
+```{r}
+#| label: tbl-parameters-Dysthymia
+#| tbl-cap: Pooled Logistic Regression Model Parameters for Dysthymia
+#| results: asis
+
+FN <- paste("Pooled results after multiple imputation by chained equations",
+            "(MICE) with predictive mean matching (PMM).",
+            "b, between imputation variance;",
+            "df, degrees of freedom for hypothesis testing with Barnard-Rubin",
+            "adjustment;",
+            "dfcom, degrees of freedom for a complete data analysis;",
+            "fmi, fraction of missing information;",
+            "labmda, proportion of total variance due to missingness;",
+            "m, number of imputed datasets;",
+            "riv, relative increase in variance due to noneresponse;",
+            "ubar, mean of the variances.")
+
+parameters_Dysthymia <- left_join(CIs_Dysthymia, OR_Dysthymia, by = join_by(term)) %>% 
+  rename(Term = term, 
+         Estimate = estimate, 
+         SE = std.error,
+         z = statistic,
+         p = p.value, 
+         Est.LL = conf.low, 
+         Est.UL = conf.high) %>% 
+  relocate(Term, Estimate, SE, Est.LL, Est.UL, OR, OR.LL, OR.UL, z, p) 
+  
+parameters_Dysthymia %>% 
+  kable(., format = "html", booktabs = TRUE, digits = 3) %>% 
+  kable_styling() %>% 
+  add_header_above(header = c(" " = 3, "95% CI" = 2, " ", "OR 95% CI" = 2, 
+                              "Wald Test" = 2, "Imputation Details" = 8)) %>% 
+  footnote(general = FN, footnote_as_chunk = TRUE) %>% 
+  cat()
+```
+
+```{r}
+#| label: emm-Dysthymia
+
+emm_Dysthymia <- emmeans(fit_Dysthymia, ~ Arm, regrid = "response") 
+emm_Dysthymia
+```
+
+```{r}
+#| label: emmc-Dysthymia
+
+emmc_test_Dysthymia <- contrast(emm_Dysthymia, method = "pairwise", 
+                                conf.int = TRUE, adjust = "none", 
+                                type = "response") 
+emmc_test_Dysthymia
+
+emmc_CI_Dysthymia <- confint(emmc_test_Dysthymia)
+emmc_CI_Dysthymia
+```
+
+## Summary of Estimated Mariginal Means
+
+@tbl-emm-Arm-all shows the estimated marginal means (rates) for the two arms 
+and associated 95% confidence intervals. The rates are proportions (or 
+probabilities) of participents diagnosed with the relevant outcome at posttest. 
+@fig-emm-Arm-all shows the marginal means and confidence intervals for each 
+outcome in graphical form. 
+
+::: {.callout-important}
+Because the model for OCD was not working, I have omitted the marginal means 
+for that outcome from this section. 
+:::
+
+```{r}
+#| label: tbl-emm-Arm-all
+#| tbl-cap: Estimated Marginal Means for Postest Diagnosis Rates by Outcome and 
+#|          Arm
+#| results: asis
+
+# Table footnote.
+FN <- paste0("Results for each outcome are averaged over the levels of ", 
+             "corresponding pretest covariate. ",
+             "Confidence intervals used 95% confidence level. ", 
+             "Rates and confidence limits are back transformed from the ", 
+             "logit-scale to probabilty/proportion scale.")
+
+emms_Arm <- list(GAD_Post = emm_GAD, 
+                 Social_Post = emm_Social, 
+                 SAD_Post = emm_SAD, 
+                 Panic_Post = emm_Panic, 
+                 MDD_Post = emm_MDD, 
+                 Dystymia_Post = emm_Dysthymia)
+
+Outcome_Names <-  names(emms_Arm)
+
+Outcome_Labels <- c("Generalized Anxiety Disorder", 
+                    "Social Anxiety Disorder",
+                    "Separation Anxiety Disorder",
+                    "Panic Disorder", 
+                    "Major Depressive Disorder",
+                    "Dysthymia")
+
+# Combine all EMMs to one tibble, then turn it into a formatted table. 
+map_dfr(lapply(emms_Arm, as_tibble), bind_rows, .id = "Variable") %>% 
+  mutate(Outcome = factor(Variable, levels = Outcome_Names, 
+                          labels = Outcome_Labels)) %>% 
+  rename(Rate = prob, CI95.LL= lower.CL, CI95.UL= upper.CL) %>% 
+  select(Outcome, Arm, Rate, SE, df, CI95.LL, CI95.UL) %>% 
+  arrange(Outcome, desc(Arm)) %>% 
+  kable(., format = "html", digits = 3) %>% 
+  kable_styling(full_width = FALSE) %>% 
+  collapse_rows(., columns = 1, valign = "top") %>% 
+  footnote(., general = FN) %>% 
+  cat()
+```
+
+```{r}
+#| label: fig-emm-Arm-all
+#| fig-cap: Estimated Marginal Means for Posttest Diagnosis Rates by Outcome and
+#|          Arm 
+#| fig-subcap: 
+#|   - "Generalized Anxiety Disorder (GAD_Post)"
+#|   - "Social Anxiety Disorder (Social_Post)"
+#|   - "Separation Anxiety Disorder (SAD_Post)"
+#|   - "Panic Disorder (Panic_Post)"
+#|   - "Major Depressive Disorder (MDD_Post)"
+#|   - "Dysthymia (Dysthymia_Post)"
+#| fig-height: 1
+
+mylimits <- c(-0.05, 0.70)
+mybreaks <- seq(0, 1, 0.1)
+myxlab <- "Posttest Diagnosis Rate"
+
+plot(emm_GAD, comparisons = TRUE, ylab = "Arm", xlab = myxlab) +
+  scale_x_continuous(limits = mylimits, breaks = mybreaks)
+plot(emm_Social, comparisons = TRUE, ylab = "Arm", xlab = myxlab) +
+  scale_x_continuous(limits = mylimits, breaks = mybreaks)
+plot(emm_SAD, comparisons = TRUE, ylab = "Arm", xlab = myxlab) +
+  scale_x_continuous(limits = mylimits, breaks = mybreaks)
+plot(emm_Panic, comparisons = TRUE, ylab = "Arm", xlab = myxlab) +
+  scale_x_continuous(limits = mylimits, breaks = mybreaks)
+plot(emm_MDD, comparisons = TRUE, ylab = "Arm", xlab = myxlab) +
+  scale_x_continuous(limits = mylimits, breaks = mybreaks)
+plot(emm_Dysthymia, comparisons = TRUE, ylab = "Arm", xlab = myxlab) +
+  scale_x_continuous(limits = mylimits, breaks = mybreaks)
+```
+
+
+
+## Contrasts Between Estimated Marginal Means
+While the odds-ratios in the logistic regression model summary tables are one 
+measure of effect size, it may also be useful to estimate the difference between 
+the marginal means for posttest diagnosis rates for each arm. This is 
+accomplished by using a contrast between the4 marginal means and yields a 
+result corresponding to an absolute differences in the rates, along with a 
+corresponding confidence interval. @tbl-emmc-Arm-all shows those estimated 
+differences between the two arms and @fig-emmc-Arm-all show3s the result in 
+graphical form. 
+
+```{r}
+#| label: tbl-emmc-Arm-all
+#| tbl-cap: Contrasts Between Estimated Marginal Means for Postest Diagnosis 
+#|          Rates by Outcome 
+#| results: asis
+
+# Table footnote.
+FN <- paste0("Results for each outcome are averaged over the levels of ", 
+             "corresponding pretest covariate. ",
+             "Confidence intervals used 95% confidence level. ", 
+             "Differences and confidence limits are back transformed from the ", 
+             "logit-scale to probabilty/proportion scale.")
+
+emmc_Arm <- list(GAD_Post = emmc_CI_GAD, 
+                 Social_Post = emmc_CI_Social, 
+                 SAD_Post = emmc_CI_SAD, 
+                 Panic_Post = emmc_CI_Panic, 
+                 MDD_Post = emmc_CI_MDD, 
+                 Dystymia_Post = emmc_CI_Dysthymia)
+
+Outcome_Names <-  names(emmc_Arm)
+
+Outcome_Labels <- c("Generalized Anxiety Disorder", 
+                    "Social Anxiety Disorder",
+                    "Separation Anxiety Disorder",
+                    "Panic Disorder", 
+                    "Major Depressive Disorder",
+                    "Dysthymia")
+
+# Combine all contrast CIs to one tibble, then turn it into a formatted table. 
+map_dfr(lapply(emmc_Arm, as_tibble), bind_rows, .id = "Variable") %>% 
+  mutate(Outcome = factor(Variable, levels = Outcome_Names, 
+                          labels = Outcome_Labels)) %>% 
+  rename(Difference = estimate, CI95.LL= lower.CL, CI95.UL= upper.CL) %>% 
+  select(Outcome, Difference, SE, df, CI95.LL, CI95.UL) %>% 
+  arrange(Outcome) %>% 
+  kable(., format = "html", digits = 3) %>% 
+  kable_styling(full_width = FALSE) %>% 
+  collapse_rows(., columns = 1, valign = "top") %>% 
+  footnote(., general = FN) %>% 
+  cat()
+```
+
+```{r}
+#| label: fig-emmc-Arm-all
+#| fig-cap: Contrasts Between Estimated Marginal Means for Posttest Diagnosis 
+#|          Rates by Outcome 
+#| fig-subcap: 
+#|   - "Generalized Anxiety Disorder (GAD_Post)"
+#|   - "Social Anxiety Disorder (Social_Post)"
+#|   - "Separation Anxiety Disorder (SAD_Post)"
+#|   - "Panic Disorder (Panic_Post)"
+#|   - "Major Depressive Disorder (MDD_Post)"
+#|   - "Dysthymia (Dysthymia_Post)"
+#| fig-height: 1
+
+mylimits <- c(-0.60, 0.40)
+mybreaks <- seq(from = -0.60, to = 0.30, by = 0.10)
+myxlab <- "Difference in Posttest Diagnosis Rates"
+
+plot(emmc_CI_GAD, ylab = "Arm", xlab = myxlab) +
+  scale_x_continuous(limits = mylimits) +
+  geom_vline(xintercept = 0, col = "red")
+plot(emmc_CI_Social, ylab = "Arm") +
+  scale_x_continuous(limits = mylimits) +
+  geom_vline(xintercept = 0, col = "red")
+plot(emmc_CI_SAD, ylab = "Arm", xlab = myxlab) +
+  scale_x_continuous(limits = mylimits) +
+  geom_vline(xintercept = 0, col = "red")
+plot(emmc_CI_Panic, ylab = "Arm", xlab = myxlab) +
+  scale_x_continuous(limits = mylimits) +
+  geom_vline(xintercept = 0, col = "red")
+plot(emmc_CI_MDD, ylab = "Arm", xlab = myxlab) +
+  scale_x_continuous(limits = mylimits) +
+  geom_vline(xintercept = 0, col = "red")
+plot(emmc_CI_Dysthymia, ylab = "Arm", xlab = myxlab) +
+  scale_x_continuous(limits = mylimits) +
+  geom_vline(xintercept = 0, col = "red")
+```
 
 # References
 ::: {#refs}
