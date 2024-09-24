@@ -1,5 +1,5 @@
 ---
-title: "ADAPT Treatment Effect on Anxiety Diagnosis"
+title: "Import ADAPT SPSS Data About Treatment Effect on Anxiety Diagnoses"
 subtitle: "Client: Lucy Nguyen. CSTAT Case: C1593"
 author: 
   - name: Steven J. Pierce
@@ -323,36 +323,50 @@ ADAPT_Clean_Data <- ADAPT_Outcomes %>%
             GAD_Pre == GAD_Post ~ "No Change",
             GAD_Pre < GAD_Post ~ "Worsened",
             .default = NA),
+         GAD_Change = factor(GAD_Change, 
+                             levels = c("Improved", "No Change", "Worsened")),
          Social_Change = case_when(
             Social_Pre > Social_Post ~ "Improved",
             Social_Pre == Social_Post ~ "No Change",
             Social_Pre < Social_Post ~ "Worsened",
             .default = NA),
+         Social_Change = factor(Social_Change, 
+                                levels = c("Improved", "No Change", "Worsened")),
          SAD_Change = case_when(
             SAD_Pre > SAD_Post ~ "Improved",
             SAD_Pre == SAD_Post ~ "No Change",
             SAD_Pre < SAD_Post ~ "Worsened",
             .default = NA),
+         SAD_Change = factor(SAD_Change, 
+                             levels = c("Improved", "No Change", "Worsened")),
          Panic_Change = case_when(
             Panic_Pre > Panic_Post ~ "Improved",
             Panic_Pre == Panic_Post ~ "No Change",
             Panic_Pre < Panic_Post ~ "Worsened",
             .default = NA),
+         Panic_Change = factor(Panic_Change, 
+                               levels = c("Improved", "No Change", "Worsened")),
          OCD_Change = case_when(
             OCD_Pre > OCD_Post ~ "Improved",
             OCD_Pre == OCD_Post ~ "No Change",
             OCD_Pre < OCD_Post ~ "Worsened",
             .default = NA),
+         OCD_Change = factor(OCD_Change, 
+                             levels = c("Improved", "No Change", "Worsened")),
          MDD_Change = case_when(
             MDD_Pre > MDD_Post ~ "Improved",
             MDD_Pre == MDD_Post ~ "No Change",
             MDD_Pre < MDD_Post ~ "Worsened",
             .default = NA),
+         MDD_Change = factor(MDD_Change, 
+                             levels = c("Improved", "No Change", "Worsened")),
          Dysthymia_Change = case_when(
             Dysthymia_Pre > Dysthymia_Post ~ "Improved",
             Dysthymia_Pre == Dysthymia_Post ~ "No Change",
             Dysthymia_Pre < Dysthymia_Post ~ "Worsened",
             .default = NA),
+         Dysthymia_Change = factor(Dysthymia_Change, 
+                                   levels = c("Improved", "No Change", "Worsened")),
          # Change variable types for mice() compatibility. 
          GAD_Pre = as_factor(GAD_Pre),
          Social_Pre = as_factor(Social_Pre),
