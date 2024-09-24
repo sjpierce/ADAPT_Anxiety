@@ -115,24 +115,8 @@ load(file=here("data/ADAPT_Clean.RData"))
 ```
 
 The imported `ADAPT_Clean_Data` data frame has `r nrow(ADAPT_Clean_Data)` rows 
-and `r ncol(ADAPT_Clean_Data)` variables. @tbl-ADAPT-Clean-variables shows a 
-list of the variable positions, names, and classes.
-
-``` {r}
-#| label: tbl-ADAPT-Clean-variables
-#| tbl-cap: "ADAPT Outcomes Clean Data: Variable Names and Classes."
-
-ADAPT_CleanVars <- list(ADAPT_Clean_Data) %>% 
-  map_dfr(~ tibble(Name = names(.x), Class = map_chr(.x, all_classes))) %>% 
-  rowid_to_column(., "Position")
-
-kable(ADAPT_CleanVars, format = "html", booktabs = TRUE, longtable = TRUE) %>%
-  kable_styling(bootstrap_options = "striped", 
-                latex_options = c("repeat_header")) 
-```
-
-Next we load the imputed data, along with the subset of the raw data that was 
-used in the impoutation process. 
+and `r ncol(ADAPT_Clean_Data)` variables. Next we load the imputed data, along
+with the subset of the raw data that was used in the imputation process.
 
 ``` {r}
 #| label: load-ADAPT-Imputed-Data
