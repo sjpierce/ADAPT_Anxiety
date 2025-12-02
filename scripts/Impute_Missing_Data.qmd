@@ -182,8 +182,8 @@ list(ADAPT_PreImpute) %>%
 # Examine Missingness {#sec-Examine-Missing}
 
 ```{r}
-#| label: tbl-N
-#| tbl-cap: Sample Size by Completeness of Data for Cases
+#| label: tbl-cvv-missingness
+#| tbl-cap: Assessment of Completeness for Cases, Variables, and Values
 
 mpat <- ADAPT_PreImpute %>% 
   select(-ID) %>% 
@@ -207,17 +207,27 @@ NIC <- ADAPT_PreImpute %>%
 # Percent of incomplete cases
 PIC <- round(100*NIC/N_Total, digits = 0)
 
-data.frame(N_Total, NCC, PCC, NIC, PIC) %>% 
-  kable(., format = "html", booktabs = TRUE, 
-        col.names = c("N", "N", "%", "N", "%")) %>% 
-  kable_styling() %>% 
-  add_header_above(., header = c(" ", "Complete Cases" = 2, "Incomplete Cases" = 2))
+cvv_missingness(ADAPT_PreImpute) %>% 
+  kable(format = "html", digits = 1,
+          col.names = c("Subset", rep(c("n", "%"), times = 3))) %>%
+    kable_styling() %>%
+    add_header_above(header = c(" " = 1, "Cases" = 2, "Variables" = 2, "Values" = 2))
 ```
 
 If we do imputation, the number of imputations should be about equal to the 
-percent of cases that are incomplete (i.e., have any missing data). @tbl-N shows 
-we have $N = `r N_Total`$ cases, of which $N_c = `r NCC`$ (`r PCC`%) are complete 
-and $N_i = `r NIC`$ (`r PIC`%) are incomplete. 
+percent of cases that are incomplete (i.e., have any missing data). 
+@tbl-cvv-missingness shows we have $N = `r N_Total`$ cases, of which 
+$N_c = `r NCC`$ (`r PCC`%) are complete and $N_i = `r NIC`$ (`r PIC`%) are 
+incomplete. @tbl-var-missingness shows the amount of missingness for each 
+variable. 
+
+```{r}
+#| label: tbl-var-missingness
+
+var_missingness(ADAPT_PreImpute) %>% 
+  kable(format = "html", digits = 1) %>%
+  kable_styling()
+```
 
 @fig-patterns shows that patterns of missing data. Each row represents a unique 
 pattern of observed versus missing data across `r ncol(ADAPT_PreImpute) - 1` 
