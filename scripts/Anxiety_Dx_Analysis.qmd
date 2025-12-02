@@ -152,9 +152,179 @@ ADAPT_Clean_Data %>%
   kable_styling(bootstrap_options = "striped") 
 ```
 
+## Demographics 
+
+### Sex
+
+```{r}
+#| label: tbl-Sex
+#| tbl-cap: Contingency Table for Sex by Arm
+#| message: false
+#| results: asis
+
+CT <- ADAPT_Clean_Data %>% 
+  xtabs(~ Gender + Arm, addNA = TRUE, data = .) 
+
+FN <- paste0("Two-sided Fisher's exact test for independence, p = ", 
+             display_num(fisher.test(x = CT)$p.value), ".")
+  
+ADAPT_Clean_Data %>% 
+  group_by(Arm, Gender) %>% 
+  summarize(N = n()) %>% 
+  pivot_wider(id_cols = Gender, names_from = Arm, values_from = N) %>% 
+  mutate(Overall = ADAPT + TAU, 
+         Overall.p = 100*Overall/sum(Overall),
+         ADAPT.p = 100*ADAPT/sum(ADAPT),
+         TAU.p = 100*TAU/sum(TAU)) %>% 
+  select(Gender, Overall, Overall.p, ADAPT, ADAPT.p, TAU, TAU.p) %>% 
+  adorn_totals(where = "row") %>% 
+  kable(format = "html", booktabs = TRUE, digits = 1,
+        col.names = c("Gender", "N", "%", "N", "%", "N", "%")) %>% 
+  kable_styling() %>% 
+  add_header_above(header = c(" ", "Overall" = 2, "ADAPT" = 2, "TAU" = 2)) %>% 
+  add_header_above(header = c(" " = 3, "Arm" = 4)) %>% 
+  footnote(kable_input = ., general = FN, footnote_as_chunk = TRUE, 
+           threeparttable = TRUE) %>% 
+  cat()
+```
+
+### Age
+
+```{r}
+#| label: tbl-Age
+#| tbl-cap: Contingency Table for Age by Arm
+#| message: false
+#| results: asis
+
+CT <- ADAPT_Clean_Data %>% 
+  xtabs(~ Age + Arm, addNA = TRUE, data = .) 
+
+FN <- paste0("Two-sided Fisher's exact test for independence, p = ", 
+             display_num(fisher.test(x = CT)$p.value), ".")
+  
+ADAPT_Clean_Data %>% 
+  group_by(Arm, Age) %>% 
+  summarize(N = n()) %>% 
+  pivot_wider(id_cols = Age, names_from = Arm, values_from = N) %>% 
+  mutate(Overall = ADAPT + TAU, 
+         Overall.p = 100*Overall/sum(Overall),
+         ADAPT.p = 100*ADAPT/sum(ADAPT),
+         TAU.p = 100*TAU/sum(TAU)) %>% 
+  select(Age, Overall, Overall.p, ADAPT, ADAPT.p, TAU, TAU.p) %>% 
+  adorn_totals(where = "row") %>% 
+  kable(format = "html", booktabs = TRUE, digits = 1,
+        col.names = c("Age (yrs)", "N", "%", "N", "%", "N", "%")) %>% 
+  kable_styling() %>% 
+  add_header_above(header = c(" ", "Overall" = 2, "ADAPT" = 2, "TAU" = 2)) %>% 
+  add_header_above(header = c(" " = 3, "Arm" = 4)) %>% 
+  footnote(kable_input = ., general = FN, footnote_as_chunk = TRUE, 
+           threeparttable = TRUE) %>% 
+  cat()
+```
+
+### Race
+
+```{r}
+#| label: tbl-Race
+#| tbl-cap: Contingency Table for Race by Arm
+#| message: false
+#| results: asis
+
+CT <- ADAPT_Clean_Data %>% 
+  xtabs(~ race_cat + Arm, addNA = TRUE, data = .) 
+
+FN <- paste0("Two-sided Fisher's exact test for independence, p = ", 
+             display_num(fisher.test(x = CT)$p.value), ".")
+  
+ADAPT_Clean_Data %>% 
+  group_by(Arm, race_cat) %>% 
+  summarize(N = n()) %>% 
+  pivot_wider(id_cols = race_cat, names_from = Arm, values_from = N) %>% 
+  mutate(Overall = ADAPT + TAU, 
+         Overall.p = 100*Overall/sum(Overall),
+         ADAPT.p = 100*ADAPT/sum(ADAPT),
+         TAU.p = 100*TAU/sum(TAU)) %>% 
+  select(race_cat, Overall, Overall.p, ADAPT, ADAPT.p, TAU, TAU.p) %>% 
+  adorn_totals(where = "row") %>% 
+  kable(format = "html", booktabs = TRUE, digits = 1,
+        col.names = c("Race", "N", "%", "N", "%", "N", "%")) %>% 
+  kable_styling() %>% 
+  add_header_above(header = c(" ", "Overall" = 2, "ADAPT" = 2, "TAU" = 2)) %>% 
+  add_header_above(header = c(" " = 3, "Arm" = 4)) %>% 
+  footnote(kable_input = ., general = FN, footnote_as_chunk = TRUE, 
+           threeparttable = TRUE) %>% 
+  cat()
+```
+
 ## Outcomes 
 
 ### Generalized Anxiety Disorder (`GAD_Pre`, `GAD_Post`) 
+
+```{r}
+#| label: tbl-GAD-pre
+#| tbl-cap: Contingency Table for GAD Diagnosis at Baseline by Arm
+#| message: false
+#| results: asis
+
+CT <- ADAPT_Clean_Data %>% 
+  xtabs(~ GAD_Pre + Arm, addNA = TRUE, data = .) 
+
+FN <- paste0("Two-sided Fisher's exact test for independence, p = ", 
+             display_num(fisher.test(x = CT)$p.value), ".")
+  
+ADAPT_Clean_Data %>% 
+  mutate(GAD_Pre = addNA(GAD_Pre)) %>% 
+  group_by(Arm, GAD_Pre, .drop = FALSE) %>% 
+  summarize(N = n()) %>% 
+  pivot_wider(id_cols = GAD_Pre, names_from = Arm, values_from = N) %>% 
+  mutate(Overall = ADAPT + TAU, 
+         Overall.p = 100*Overall/sum(Overall),
+         ADAPT.p = 100*ADAPT/sum(ADAPT),
+         TAU.p = 100*TAU/sum(TAU)) %>% 
+  select(GAD_Pre, Overall, Overall.p, ADAPT, ADAPT.p, TAU, TAU.p) %>% 
+  adorn_totals(where = "row") %>% 
+  kable(format = "html", booktabs = TRUE, digits = 1,
+        col.names = c("GAD at Baseline", "N", "%", "N", "%", "N", "%")) %>% 
+  kable_styling() %>% 
+  add_header_above(header = c(" ", "Overall" = 2, "ADAPT" = 2, "TAU" = 2)) %>% 
+  add_header_above(header = c(" " = 3, "Arm" = 4)) %>% 
+  footnote(kable_input = ., general = FN, footnote_as_chunk = TRUE, 
+           threeparttable = TRUE) %>% 
+  cat()
+```
+
+```{r}
+#| label: tbl-GAD-post
+#| tbl-cap: Contingency Table for GAD Diagnosis at Posttest by Arm
+#| message: false
+#| results: asis
+
+CT <- ADAPT_Clean_Data %>% 
+  xtabs(~ GAD_Post + Arm, addNA = TRUE, data = .) 
+
+FN <- paste0("Two-sided Fisher's exact test for independence, p = ", 
+             display_num(fisher.test(x = CT)$p.value), ".")
+  
+ADAPT_Clean_Data %>% 
+  mutate(GAD_Post = addNA(GAD_Post)) %>% 
+  group_by(Arm, GAD_Post, .drop = FALSE) %>% 
+  summarize(N = n()) %>% 
+  pivot_wider(id_cols = GAD_Post, names_from = Arm, values_from = N) %>% 
+  mutate(Overall = ADAPT + TAU, 
+         Overall.p = 100*Overall/sum(Overall),
+         ADAPT.p = 100*ADAPT/sum(ADAPT),
+         TAU.p = 100*TAU/sum(TAU)) %>% 
+  select(GAD_Post, Overall, Overall.p, ADAPT, ADAPT.p, TAU, TAU.p) %>% 
+  adorn_totals(where = "row") %>% 
+  kable(format = "html", booktabs = TRUE, digits = 1,
+        col.names = c("GAD at Posttest", "N", "%", "N", "%", "N", "%")) %>% 
+  kable_styling() %>% 
+  add_header_above(header = c(" ", "Overall" = 2, "ADAPT" = 2, "TAU" = 2)) %>% 
+  add_header_above(header = c(" " = 3, "Arm" = 4)) %>% 
+  footnote(kable_input = ., general = FN, footnote_as_chunk = TRUE, 
+           threeparttable = TRUE) %>% 
+  cat()
+```
 
 ```{r}
 #| label: tbl-xtabs-GAD
@@ -178,23 +348,6 @@ ADAPT_Clean_Data %>%
   row_spec(row = 4, bold = TRUE) %>% 
   column_spec(column = 5, bold = TRUE) %>% 
   add_header_above(header = c(" ", "Diagnosed at Posttest" = 3, " "))
-```
-
-```{r}
-#| label: tbl-GAD-Change
-#| tbl-cap: "Change in Diagnosis with GAD Over Time"
-
-ADAPT_Clean_Data %>% 
-  mutate(Dx_Change = addNA(GAD_Change)) %>% 
-  group_by(Dx_Change, .drop = FALSE) %>% 
-  summarise(N = n()) %>% 
-  mutate(Percent = 100*N/sum(N)) %>% 
-  ungroup() %>% 
-  adorn_totals(where = "row", name = "Sum") %>%
-  kable(format = "html", digits = 0,
-        col.names = c("Diagnosis Change", "N", "%")) %>% 
-  kable_styling() %>% 
-  row_spec(row = 5, bold = TRUE)
 ```
 
 ```{r}
@@ -226,23 +379,102 @@ ADAPT_Clean_Data %>%
 ```{r}
 #| label: tbl-GAD-Change-Arm
 #| tbl-cap: "Change in Diagnosis with GAD Over Time by Arm"
+#| results: asis
+
+CT <- ADAPT_Clean_Data %>% 
+  xtabs(~ GAD_Change + Arm, addNA = TRUE, data = .) 
+
+FN <- paste0("Two-sided Fisher's exact test for independence, p = ", 
+             display_num(fisher.test(x = CT)$p.value), ".")
 
 ADAPT_Clean_Data %>% 
   mutate(Dx_Change = addNA(GAD_Change)) %>% 
   group_by(Arm, Dx_Change, .drop = FALSE) %>% 
   summarise(N = n()) %>% 
-  mutate(Percent = 100*N/sum(N)) %>% 
-  group_modify(~ .x %>% adorn_totals(where = "row")) %>%
-  ungroup() %>% 
+  pivot_wider(id_cols = Dx_Change, names_from = Arm, values_from = N) %>% 
+  mutate(Overall = ADAPT + TAU, 
+         Overall.p = 100*Overall/sum(Overall),
+         ADAPT.p = 100*ADAPT/sum(ADAPT),
+         TAU.p = 100*TAU/sum(TAU)) %>% 
+  select(Dx_Change, Overall, Overall.p, ADAPT, ADAPT.p, TAU, TAU.p) %>% 
+  adorn_totals(where = "row") %>%
   kable(format = "html", digits = 0,
-        col.names = c("Arm", "Diagnosis Change", "N", "%")) %>% 
+        col.names = c("GAD Change", "N", "%", "N", "%", "N", "%")) %>% 
   kable_styling() %>% 
-  row_spec(row = c(5,10), bold = TRUE) %>% 
-  collapse_rows(columns = 1:2, valign = "top", latex_hline = "major", 
-                row_group_label_position = "stack")
+  add_header_above(header = c(" ", "Overall" = 2, "ADAPT" = 2, "TAU" = 2)) %>% 
+  add_header_above(header = c(" " = 3, "Arm" = 4)) %>% 
+  footnote(kable_input = ., general = FN, footnote_as_chunk = TRUE, 
+           threeparttable = TRUE) %>% 
+  cat()
 ```
 
 ### Social Anxiety Disorder (`Social_Pre`, `Social_Post`)
+
+```{r}
+#| label: tbl-Social-pre
+#| tbl-cap: Contingency Table for Social Anxiety Disorder Diagnosis at Baseline by Arm
+#| message: false
+#| results: asis
+
+CT <- ADAPT_Clean_Data %>% 
+  xtabs(~ Social_Pre + Arm, addNA = TRUE, data = .) 
+
+FN <- paste0("Two-sided Fisher's exact test for independence, p = ", 
+             display_num(fisher.test(x = CT)$p.value), ".")
+  
+ADAPT_Clean_Data %>% 
+  mutate(Social_Pre = addNA(Social_Pre)) %>% 
+  group_by(Arm, Social_Pre, .drop = FALSE) %>% 
+  summarize(N = n()) %>% 
+  pivot_wider(id_cols = Social_Pre, names_from = Arm, values_from = N) %>% 
+  mutate(Overall = ADAPT + TAU, 
+         Overall.p = 100*Overall/sum(Overall),
+         ADAPT.p = 100*ADAPT/sum(ADAPT),
+         TAU.p = 100*TAU/sum(TAU)) %>% 
+  select(Social_Pre, Overall, Overall.p, ADAPT, ADAPT.p, TAU, TAU.p) %>% 
+  adorn_totals(where = "row") %>% 
+  kable(format = "html", digits = 0,
+        col.names = c("Social Anxiety Disorder at Baseline", "N", "%", "N", "%", "N", "%")) %>% 
+  kable_styling() %>% 
+  add_header_above(header = c(" ", "Overall" = 2, "ADAPT" = 2, "TAU" = 2)) %>% 
+  add_header_above(header = c(" " = 3, "Arm" = 4)) %>% 
+  footnote(kable_input = ., general = FN, footnote_as_chunk = TRUE, 
+           threeparttable = TRUE) %>% 
+  cat()
+```
+
+```{r}
+#| label: tbl-Social-post
+#| tbl-cap: Contingency Table for Social Anxiety Disorder  Diagnosis at Posttest by Arm
+#| message: false
+#| results: asis
+
+CT <- ADAPT_Clean_Data %>% 
+  xtabs(~ Social_Post + Arm, addNA = TRUE, data = .) 
+
+FN <- paste0("Two-sided Fisher's exact test for independence, p = ", 
+             display_num(fisher.test(x = CT)$p.value), ".")
+  
+ADAPT_Clean_Data %>% 
+  mutate(Social_Post = addNA(Social_Post)) %>% 
+  group_by(Arm, Social_Post, .drop = FALSE) %>% 
+  summarize(N = n()) %>% 
+  pivot_wider(id_cols = Social_Post, names_from = Arm, values_from = N) %>% 
+  mutate(Overall = ADAPT + TAU, 
+         Overall.p = 100*Overall/sum(Overall),
+         ADAPT.p = 100*ADAPT/sum(ADAPT),
+         TAU.p = 100*TAU/sum(TAU)) %>% 
+  select(Social_Post, Overall, Overall.p, ADAPT, ADAPT.p, TAU, TAU.p) %>% 
+  adorn_totals(where = "row") %>% 
+  kable(format = "html", booktabs = TRUE, digits = 1,
+        col.names = c("Social Anxiety Disorder at Posttest", "N", "%", "N", "%", "N", "%")) %>% 
+  kable_styling() %>% 
+  add_header_above(header = c(" ", "Overall" = 2, "ADAPT" = 2, "TAU" = 2)) %>% 
+  add_header_above(header = c(" " = 3, "Arm" = 4)) %>% 
+  footnote(kable_input = ., general = FN, footnote_as_chunk = TRUE, 
+           threeparttable = TRUE) %>% 
+  cat()
+```
 
 ```{r}
 #| label: tbl-xtabs-Social
@@ -266,23 +498,6 @@ ADAPT_Clean_Data %>%
   row_spec(row = 4, bold = TRUE) %>% 
   column_spec(column = 5, bold = TRUE) %>% 
   add_header_above(header = c(" ", "Diagnosed at Posttest" = 3, " "))
-```
-
-```{r}
-#| label: tbl-Social-Change
-#| tbl-cap: "Change in Diagnosis with Social Anxiety Disorder Over Time"
-
-ADAPT_Clean_Data %>% 
-  mutate(Dx_Change = addNA(Social_Change)) %>% 
-  group_by(Dx_Change, .drop = FALSE) %>% 
-  summarise(N = n()) %>% 
-  mutate(Percent = 100*N/sum(N)) %>% 
-  ungroup() %>% 
-  adorn_totals(where = "row", name = "Sum") %>%
-  kable(format = "html", digits = 0,
-        col.names = c("Diagnosis Change", "N", "%")) %>% 
-  kable_styling() %>% 
-  row_spec(row = 5, bold = TRUE)
 ```
 
 ```{r}
@@ -314,23 +529,102 @@ ADAPT_Clean_Data %>%
 ```{r}
 #| label: tbl-Social-Change-Arm
 #| tbl-cap: "Change in Diagnosis with Social Anxiety Disorder Over Time by Arm"
+#| results: asis
+
+CT <- ADAPT_Clean_Data %>% 
+  xtabs(~ Social_Change + Arm, addNA = TRUE, data = .) 
+
+FN <- paste0("Two-sided Fisher's exact test for independence, p = ", 
+             display_num(fisher.test(x = CT)$p.value), ".")
 
 ADAPT_Clean_Data %>% 
   mutate(Dx_Change = addNA(Social_Change)) %>% 
   group_by(Arm, Dx_Change, .drop = FALSE) %>% 
   summarise(N = n()) %>% 
-  mutate(Percent = 100*N/sum(N)) %>% 
-  group_modify(~ .x %>% adorn_totals(where = "row")) %>%
-  ungroup() %>% 
+  pivot_wider(id_cols = Dx_Change, names_from = Arm, values_from = N) %>% 
+  mutate(Overall = ADAPT + TAU, 
+         Overall.p = 100*Overall/sum(Overall),
+         ADAPT.p = 100*ADAPT/sum(ADAPT),
+         TAU.p = 100*TAU/sum(TAU)) %>% 
+  select(Dx_Change, Overall, Overall.p, ADAPT, ADAPT.p, TAU, TAU.p) %>% 
+  adorn_totals(where = "row") %>%
   kable(format = "html", digits = 0,
-        col.names = c("Arm", "Diagnosis Change", "N", "%")) %>% 
+        col.names = c("Social Anxiety Disorder Change", "N", "%", "N", "%", "N", "%")) %>% 
   kable_styling() %>% 
-  row_spec(row = c(5,10), bold = TRUE) %>% 
-  collapse_rows(columns = 1:2, valign = "top", latex_hline = "major", 
-                row_group_label_position = "stack")
+  add_header_above(header = c(" ", "Overall" = 2, "ADAPT" = 2, "TAU" = 2)) %>% 
+  add_header_above(header = c(" " = 3, "Arm" = 4)) %>% 
+  footnote(kable_input = ., general = FN, footnote_as_chunk = TRUE, 
+           threeparttable = TRUE) %>% 
+  cat()
 ```
 
 ### Separation Anxiety Disorder (`SAD_Pre`, `SAD_Post`)
+
+```{r}
+#| label: tbl-SAD-pre
+#| tbl-cap: Contingency Table for SAD Diagnosis at Baseline by Arm
+#| message: false
+#| results: asis
+
+CT <- ADAPT_Clean_Data %>% 
+  xtabs(~ SAD_Pre + Arm, addNA = TRUE, data = .) 
+
+FN <- paste0("Two-sided Fisher's exact test for independence, p = ", 
+             display_num(fisher.test(x = CT)$p.value), ".")
+  
+ADAPT_Clean_Data %>% 
+  mutate(SAD_Pre = addNA(SAD_Pre)) %>% 
+  group_by(Arm, SAD_Pre, .drop = FALSE) %>% 
+  summarize(N = n()) %>% 
+  pivot_wider(id_cols = SAD_Pre, names_from = Arm, values_from = N) %>% 
+  mutate(Overall = ADAPT + TAU, 
+         Overall.p = 100*Overall/sum(Overall),
+         ADAPT.p = 100*ADAPT/sum(ADAPT),
+         TAU.p = 100*TAU/sum(TAU)) %>% 
+  select(SAD_Pre, Overall, Overall.p, ADAPT, ADAPT.p, TAU, TAU.p) %>% 
+  adorn_totals(where = "row") %>% 
+  kable(format = "html", booktabs = TRUE, digits = 1,
+        col.names = c("SAD at Baseline", "N", "%", "N", "%", "N", "%")) %>% 
+  kable_styling() %>% 
+  add_header_above(header = c(" ", "Overall" = 2, "ADAPT" = 2, "TAU" = 2)) %>% 
+  add_header_above(header = c(" " = 3, "Arm" = 4)) %>% 
+  footnote(kable_input = ., general = FN, footnote_as_chunk = TRUE, 
+           threeparttable = TRUE) %>% 
+  cat()
+```
+
+```{r}
+#| label: tbl-SAD-post
+#| tbl-cap: Contingency Table for SAD Diagnosis at Posttest by Arm
+#| message: false
+#| results: asis
+
+CT <- ADAPT_Clean_Data %>% 
+  xtabs(~ SAD_Post + Arm, addNA = TRUE, data = .) 
+
+FN <- paste0("Two-sided Fisher's exact test for independence, p = ", 
+             display_num(fisher.test(x = CT)$p.value), ".")
+  
+ADAPT_Clean_Data %>% 
+  mutate(SAD_Post = addNA(SAD_Post)) %>% 
+  group_by(Arm, SAD_Post, .drop = FALSE) %>% 
+  summarize(N = n()) %>% 
+  pivot_wider(id_cols = SAD_Post, names_from = Arm, values_from = N) %>% 
+  mutate(Overall = ADAPT + TAU, 
+         Overall.p = 100*Overall/sum(Overall),
+         ADAPT.p = 100*ADAPT/sum(ADAPT),
+         TAU.p = 100*TAU/sum(TAU)) %>% 
+  select(SAD_Post, Overall, Overall.p, ADAPT, ADAPT.p, TAU, TAU.p) %>% 
+  adorn_totals(where = "row") %>% 
+  kable(format = "html", booktabs = TRUE, digits = 1,
+        col.names = c("SAD at Posttest", "N", "%", "N", "%", "N", "%")) %>% 
+  kable_styling() %>% 
+  add_header_above(header = c(" ", "Overall" = 2, "ADAPT" = 2, "TAU" = 2)) %>% 
+  add_header_above(header = c(" " = 3, "Arm" = 4)) %>% 
+  footnote(kable_input = ., general = FN, footnote_as_chunk = TRUE, 
+           threeparttable = TRUE) %>% 
+  cat()
+```
 
 ```{r}
 #| label: tbl-xtabs-SAD
@@ -354,23 +648,6 @@ ADAPT_Clean_Data %>%
   row_spec(row = 4, bold = TRUE) %>% 
   column_spec(column = 5, bold = TRUE) %>% 
   add_header_above(header = c(" ", "Diagnosed at Posttest" = 3, " "))
-```
-
-```{r}
-#| label: tbl-SAD-Change
-#| tbl-cap: "Change in Diagnosis with SAD Over Time"
-
-ADAPT_Clean_Data %>% 
-  mutate(Dx_Change = addNA(SAD_Change)) %>% 
-  group_by(Dx_Change, .drop = FALSE) %>% 
-  summarise(N = n()) %>% 
-  mutate(Percent = 100*N/sum(N)) %>% 
-  ungroup() %>% 
-  adorn_totals(where = "row", name = "Sum") %>%
-  kable(format = "html", digits = 0,
-        col.names = c("Diagnosis Change", "N", "%")) %>% 
-  kable_styling() %>% 
-  row_spec(row = 5, bold = TRUE)
 ```
 
 ```{r}
@@ -402,23 +679,102 @@ ADAPT_Clean_Data %>%
 ```{r}
 #| label: tbl-SAD-Change-Arm
 #| tbl-cap: "Change in Diagnosis with SAD Over Time by Arm"
+#| results: asis
+
+CT <- ADAPT_Clean_Data %>% 
+  xtabs(~ SAD_Change + Arm, addNA = TRUE, data = .) 
+
+FN <- paste0("Two-sided Fisher's exact test for independence, p = ", 
+             display_num(fisher.test(x = CT)$p.value), ".")
 
 ADAPT_Clean_Data %>% 
   mutate(Dx_Change = addNA(SAD_Change)) %>% 
   group_by(Arm, Dx_Change, .drop = FALSE) %>% 
   summarise(N = n()) %>% 
-  mutate(Percent = 100*N/sum(N)) %>% 
-  group_modify(~ .x %>% adorn_totals(where = "row")) %>%
-  ungroup() %>% 
+  pivot_wider(id_cols = Dx_Change, names_from = Arm, values_from = N) %>% 
+  mutate(Overall = ADAPT + TAU, 
+         Overall.p = 100*Overall/sum(Overall),
+         ADAPT.p = 100*ADAPT/sum(ADAPT),
+         TAU.p = 100*TAU/sum(TAU)) %>% 
+  select(Dx_Change, Overall, Overall.p, ADAPT, ADAPT.p, TAU, TAU.p) %>% 
+  adorn_totals(where = "row") %>%
   kable(format = "html", digits = 0,
-        col.names = c("Arm", "Diagnosis Change", "N", "%")) %>% 
+        col.names = c("SAD Change", "N", "%", "N", "%", "N", "%")) %>% 
   kable_styling() %>% 
-  row_spec(row = c(5,10), bold = TRUE) %>% 
-  collapse_rows(columns = 1:2, valign = "top", latex_hline = "major", 
-                row_group_label_position = "stack")
+  add_header_above(header = c(" ", "Overall" = 2, "ADAPT" = 2, "TAU" = 2)) %>% 
+  add_header_above(header = c(" " = 3, "Arm" = 4)) %>% 
+  footnote(kable_input = ., general = FN, footnote_as_chunk = TRUE, 
+           threeparttable = TRUE) %>% 
+  cat()
 ```
 
 ### Panic Disoder (`Panic_Pre`, `Panic_Post`)
+
+```{r}
+#| label: tbl-Panic-pre
+#| tbl-cap: Contingency Table for Panic Disorder Diagnosis at Baseline by Arm
+#| message: false
+#| results: asis
+
+CT <- ADAPT_Clean_Data %>% 
+  xtabs(~ Panic_Pre + Arm, addNA = TRUE, data = .) 
+
+FN <- paste0("Two-sided Fisher's exact test for independence, p = ", 
+             display_num(fisher.test(x = CT)$p.value), ".")
+  
+ADAPT_Clean_Data %>% 
+  mutate(Panic_Pre = addNA(Panic_Pre)) %>% 
+  group_by(Arm, Panic_Pre, .drop = FALSE) %>% 
+  summarize(N = n()) %>% 
+  pivot_wider(id_cols = Panic_Pre, names_from = Arm, values_from = N) %>% 
+  mutate(Overall = ADAPT + TAU, 
+         Overall.p = 100*Overall/sum(Overall),
+         ADAPT.p = 100*ADAPT/sum(ADAPT),
+         TAU.p = 100*TAU/sum(TAU)) %>% 
+  select(Panic_Pre, Overall, Overall.p, ADAPT, ADAPT.p, TAU, TAU.p) %>% 
+  adorn_totals(where = "row") %>% 
+  kable(format = "html", booktabs = TRUE, digits = 1,
+        col.names = c("Panic Disorder at Baseline", "N", "%", "N", "%", "N", "%")) %>% 
+  kable_styling() %>% 
+  add_header_above(header = c(" ", "Overall" = 2, "ADAPT" = 2, "TAU" = 2)) %>% 
+  add_header_above(header = c(" " = 3, "Arm" = 4)) %>% 
+  footnote(kable_input = ., general = FN, footnote_as_chunk = TRUE, 
+           threeparttable = TRUE) %>% 
+  cat()
+```
+
+```{r}
+#| label: tbl-Panic-post
+#| tbl-cap: Contingency Table for Panic Disorder  Diagnosis at Posttest by Arm
+#| message: false
+#| results: asis
+
+CT <- ADAPT_Clean_Data %>% 
+  xtabs(~ Panic_Post + Arm, addNA = TRUE, data = .) 
+
+FN <- paste0("Two-sided Fisher's exact test for independence, p = ", 
+             display_num(fisher.test(x = CT)$p.value), ".")
+  
+ADAPT_Clean_Data %>% 
+  mutate(Panic_Post = addNA(Panic_Post)) %>% 
+  group_by(Arm, Panic_Post, .drop = FALSE) %>% 
+  summarize(N = n()) %>% 
+  pivot_wider(id_cols = Panic_Post, names_from = Arm, values_from = N) %>% 
+  mutate(Overall = ADAPT + TAU, 
+         Overall.p = 100*Overall/sum(Overall),
+         ADAPT.p = 100*ADAPT/sum(ADAPT),
+         TAU.p = 100*TAU/sum(TAU)) %>% 
+  select(Panic_Post, Overall, Overall.p, ADAPT, ADAPT.p, TAU, TAU.p) %>% 
+  adorn_totals(where = "row") %>% 
+  kable(format = "html", booktabs = TRUE, digits = 1,
+        col.names = c("Panic Disorder at Posttest", "N", "%", "N", "%", "N", "%")) %>% 
+  kable_styling() %>% 
+  add_header_above(header = c(" ", "Overall" = 2, "ADAPT" = 2, "TAU" = 2)) %>% 
+  add_header_above(header = c(" " = 3, "Arm" = 4)) %>% 
+  footnote(kable_input = ., general = FN, footnote_as_chunk = TRUE, 
+           threeparttable = TRUE) %>% 
+  cat()
+```
 
 ```{r}
 #| label: tbl-xtabs-Panic
@@ -442,23 +798,6 @@ ADAPT_Clean_Data %>%
   row_spec(row = 4, bold = TRUE) %>% 
   column_spec(column = 5, bold = TRUE) %>% 
   add_header_above(header = c(" ", "Diagnosed at Posttest" = 3, " "))
-```
-
-```{r}
-#| label: tbl-Panic-Change
-#| tbl-cap: "Change in Diagnosis with Panic Disorder Over Time"
-
-ADAPT_Clean_Data %>% 
-  mutate(Dx_Change = addNA(Panic_Change)) %>% 
-  group_by(Dx_Change, .drop = FALSE) %>% 
-  summarise(N = n()) %>% 
-  mutate(Percent = 100*N/sum(N)) %>% 
-  ungroup() %>% 
-  adorn_totals(where = "row", name = "Sum") %>%
-  kable(format = "html", digits = 0,
-        col.names = c("Diagnosis Change", "N", "%")) %>% 
-  kable_styling() %>% 
-  row_spec(row = 5, bold = TRUE)
 ```
 
 ```{r}
@@ -490,23 +829,102 @@ ADAPT_Clean_Data %>%
 ```{r}
 #| label: tbl-Panic-Change-Arm
 #| tbl-cap: "Change in Diagnosis with Panic Disorder Over Time by Arm"
+#| results: asis
+
+CT <- ADAPT_Clean_Data %>% 
+  xtabs(~ Panic_Change + Arm, addNA = TRUE, data = .) 
+
+FN <- paste0("Two-sided Fisher's exact test for independence, p = ", 
+             display_num(fisher.test(x = CT)$p.value), ".")
 
 ADAPT_Clean_Data %>% 
   mutate(Dx_Change = addNA(Panic_Change)) %>% 
   group_by(Arm, Dx_Change, .drop = FALSE) %>% 
   summarise(N = n()) %>% 
-  mutate(Percent = 100*N/sum(N)) %>% 
-  group_modify(~ .x %>% adorn_totals(where = "row")) %>%
-  ungroup() %>% 
+  pivot_wider(id_cols = Dx_Change, names_from = Arm, values_from = N) %>% 
+  mutate(Overall = ADAPT + TAU, 
+         Overall.p = 100*Overall/sum(Overall),
+         ADAPT.p = 100*ADAPT/sum(ADAPT),
+         TAU.p = 100*TAU/sum(TAU)) %>% 
+  select(Dx_Change, Overall, Overall.p, ADAPT, ADAPT.p, TAU, TAU.p) %>% 
+  adorn_totals(where = "row") %>%
   kable(format = "html", digits = 0,
-        col.names = c("Arm", "Diagnosis Change", "N", "%")) %>% 
+        col.names = c("Panic Change", "N", "%", "N", "%", "N", "%")) %>% 
   kable_styling() %>% 
-  row_spec(row = c(5,10), bold = TRUE) %>% 
-  collapse_rows(columns = 1:2, valign = "top", latex_hline = "major", 
-                row_group_label_position = "stack")
+  add_header_above(header = c(" ", "Overall" = 2, "ADAPT" = 2, "TAU" = 2)) %>% 
+  add_header_above(header = c(" " = 3, "Arm" = 4)) %>% 
+  footnote(kable_input = ., general = FN, footnote_as_chunk = TRUE, 
+           threeparttable = TRUE) %>% 
+  cat()
 ```
 
 ### Obsessive Compusive Disorder (`OCD_Pre`, `OCD_Post`)
+
+```{r}
+#| label: tbl-OCD-pre
+#| tbl-cap: Contingency Table for OCD Diagnosis at Baseline by Arm
+#| message: false
+#| results: asis
+
+CT <- ADAPT_Clean_Data %>% 
+  xtabs(~ OCD_Pre + Arm, addNA = TRUE, data = .) 
+
+FN <- paste0("Two-sided Fisher's exact test for independence, p = ", 
+             display_num(fisher.test(x = CT)$p.value), ".")
+  
+ADAPT_Clean_Data %>% 
+  mutate(OCD_Pre = addNA(OCD_Pre)) %>% 
+  group_by(Arm, OCD_Pre, .drop = FALSE) %>% 
+  summarize(N = n()) %>% 
+  pivot_wider(id_cols = OCD_Pre, names_from = Arm, values_from = N) %>% 
+  mutate(Overall = ADAPT + TAU, 
+         Overall.p = 100*Overall/sum(Overall),
+         ADAPT.p = 100*ADAPT/sum(ADAPT),
+         TAU.p = 100*TAU/sum(TAU)) %>% 
+  select(OCD_Pre, Overall, Overall.p, ADAPT, ADAPT.p, TAU, TAU.p) %>% 
+  adorn_totals(where = "row") %>% 
+  kable(format = "html", booktabs = TRUE, digits = 1,
+        col.names = c("OCD at Baseline", "N", "%", "N", "%", "N", "%")) %>% 
+  kable_styling() %>% 
+  add_header_above(header = c(" ", "Overall" = 2, "ADAPT" = 2, "TAU" = 2)) %>% 
+  add_header_above(header = c(" " = 3, "Arm" = 4)) %>% 
+  footnote(kable_input = ., general = FN, footnote_as_chunk = TRUE, 
+           threeparttable = TRUE) %>% 
+  cat()
+```
+
+```{r}
+#| label: tbl-OCD-post
+#| tbl-cap: Contingency Table for OCD Diagnosis at Posttest by Arm
+#| message: false
+#| results: asis
+
+CT <- ADAPT_Clean_Data %>% 
+  xtabs(~ OCD_Post + Arm, addNA = TRUE, data = .) 
+
+FN <- paste0("Two-sided Fisher's exact test for independence, p = ", 
+             display_num(fisher.test(x = CT)$p.value), ".")
+  
+ADAPT_Clean_Data %>% 
+  mutate(OCD_Post = addNA(OCD_Post)) %>% 
+  group_by(Arm, OCD_Post, .drop = FALSE) %>% 
+  summarize(N = n()) %>% 
+  pivot_wider(id_cols = OCD_Post, names_from = Arm, values_from = N) %>% 
+  mutate(Overall = ADAPT + TAU, 
+         Overall.p = 100*Overall/sum(Overall),
+         ADAPT.p = 100*ADAPT/sum(ADAPT),
+         TAU.p = 100*TAU/sum(TAU)) %>% 
+  select(OCD_Post, Overall, Overall.p, ADAPT, ADAPT.p, TAU, TAU.p) %>% 
+  adorn_totals(where = "row") %>% 
+  kable(format = "html", booktabs = TRUE, digits = 1,
+        col.names = c("OCD at Posttest", "N", "%", "N", "%", "N", "%")) %>% 
+  kable_styling() %>% 
+  add_header_above(header = c(" ", "Overall" = 2, "ADAPT" = 2, "TAU" = 2)) %>% 
+  add_header_above(header = c(" " = 3, "Arm" = 4)) %>% 
+  footnote(kable_input = ., general = FN, footnote_as_chunk = TRUE, 
+           threeparttable = TRUE) %>% 
+  cat()
+```
 
 ```{r}
 #| label: tbl-xtabs-OCD
@@ -530,23 +948,6 @@ ADAPT_Clean_Data %>%
   row_spec(row = 4, bold = TRUE) %>% 
   column_spec(column = 5, bold = TRUE) %>% 
   add_header_above(header = c(" ", "Diagnosed at Posttest" = 3, " "))
-```
-
-```{r}
-#| label: tbl-OCD-Change
-#| tbl-cap: "Change in Diagnosis with OCD Over Time"
-
-ADAPT_Clean_Data %>% 
-  mutate(Dx_Change = addNA(OCD_Change)) %>% 
-  group_by(Dx_Change, .drop = FALSE) %>% 
-  summarise(N = n()) %>% 
-  mutate(Percent = 100*N/sum(N)) %>% 
-  ungroup() %>% 
-  adorn_totals(where = "row", name = "Sum") %>%
-  kable(format = "html", digits = 0,
-        col.names = c("Diagnosis Change", "N", "%")) %>% 
-  kable_styling() %>% 
-  row_spec(row = 5, bold = TRUE)
 ```
 
 ```{r}
@@ -578,23 +979,102 @@ ADAPT_Clean_Data %>%
 ```{r}
 #| label: tbl-OCD-Change-Arm
 #| tbl-cap: "Change in Diagnosis with OCD Over Time by Arm"
+#| results: asis
+
+CT <- ADAPT_Clean_Data %>% 
+  xtabs(~ OCD_Change + Arm, addNA = TRUE, data = .) 
+
+FN <- paste0("Two-sided Fisher's exact test for independence, p = ", 
+             display_num(fisher.test(x = CT)$p.value), ".")
 
 ADAPT_Clean_Data %>% 
   mutate(Dx_Change = addNA(OCD_Change)) %>% 
   group_by(Arm, Dx_Change, .drop = FALSE) %>% 
   summarise(N = n()) %>% 
-  mutate(Percent = 100*N/sum(N)) %>% 
-  group_modify(~ .x %>% adorn_totals(where = "row")) %>%
-  ungroup() %>% 
+  pivot_wider(id_cols = Dx_Change, names_from = Arm, values_from = N) %>% 
+  mutate(Overall = ADAPT + TAU, 
+         Overall.p = 100*Overall/sum(Overall),
+         ADAPT.p = 100*ADAPT/sum(ADAPT),
+         TAU.p = 100*TAU/sum(TAU)) %>% 
+  select(Dx_Change, Overall, Overall.p, ADAPT, ADAPT.p, TAU, TAU.p) %>% 
+  adorn_totals(where = "row") %>%
   kable(format = "html", digits = 0,
-        col.names = c("Arm", "Diagnosis Change", "N", "%")) %>% 
+        col.names = c("OCD Change", "N", "%", "N", "%", "N", "%")) %>% 
   kable_styling() %>% 
-  row_spec(row = c(5,10), bold = TRUE) %>% 
-  collapse_rows(columns = 1:2, valign = "top", latex_hline = "major", 
-                row_group_label_position = "stack")
+  add_header_above(header = c(" ", "Overall" = 2, "ADAPT" = 2, "TAU" = 2)) %>% 
+  add_header_above(header = c(" " = 3, "Arm" = 4)) %>% 
+  footnote(kable_input = ., general = FN, footnote_as_chunk = TRUE, 
+           threeparttable = TRUE) %>% 
+  cat()
 ```
 
 ### Major Depressive Disorder (`MDD_Pre`, `MDD_Post`)
+
+```{r}
+#| label: tbl-MDD-pre
+#| tbl-cap: Contingency Table for MDD Diagnosis at Baseline by Arm
+#| message: false
+#| results: asis
+
+CT <- ADAPT_Clean_Data %>% 
+  xtabs(~ MDD_Pre + Arm, addNA = TRUE, data = .) 
+
+FN <- paste0("Two-sided Fisher's exact test for independence, p = ", 
+             display_num(fisher.test(x = CT)$p.value), ".")
+  
+ADAPT_Clean_Data %>% 
+  mutate(MDD_Pre = addNA(MDD_Pre)) %>% 
+  group_by(Arm, MDD_Pre, .drop = FALSE) %>% 
+  summarize(N = n()) %>% 
+  pivot_wider(id_cols = MDD_Pre, names_from = Arm, values_from = N) %>% 
+  mutate(Overall = ADAPT + TAU, 
+         Overall.p = 100*Overall/sum(Overall),
+         ADAPT.p = 100*ADAPT/sum(ADAPT),
+         TAU.p = 100*TAU/sum(TAU)) %>% 
+  select(MDD_Pre, Overall, Overall.p, ADAPT, ADAPT.p, TAU, TAU.p) %>% 
+  adorn_totals(where = "row") %>% 
+  kable(format = "html", booktabs = TRUE, digits = 1,
+        col.names = c("MDD at Baseline", "N", "%", "N", "%", "N", "%")) %>% 
+  kable_styling() %>% 
+  add_header_above(header = c(" ", "Overall" = 2, "ADAPT" = 2, "TAU" = 2)) %>% 
+  add_header_above(header = c(" " = 3, "Arm" = 4)) %>% 
+  footnote(kable_input = ., general = FN, footnote_as_chunk = TRUE, 
+           threeparttable = TRUE) %>% 
+  cat()
+```
+
+```{r}
+#| label: tbl-MDD-post
+#| tbl-cap: Contingency Table for MDD Diagnosis at Posttest by Arm
+#| message: false
+#| results: asis
+
+CT <- ADAPT_Clean_Data %>% 
+  xtabs(~ MDD_Post + Arm, addNA = TRUE, data = .) 
+
+FN <- paste0("Two-sided Fisher's exact test for independence, p = ", 
+             display_num(fisher.test(x = CT)$p.value), ".")
+  
+ADAPT_Clean_Data %>% 
+  mutate(MDD_Post = addNA(MDD_Post)) %>% 
+  group_by(Arm, MDD_Post, .drop = FALSE) %>% 
+  summarize(N = n()) %>% 
+  pivot_wider(id_cols = MDD_Post, names_from = Arm, values_from = N) %>% 
+  mutate(Overall = ADAPT + TAU, 
+         Overall.p = 100*Overall/sum(Overall),
+         ADAPT.p = 100*ADAPT/sum(ADAPT),
+         TAU.p = 100*TAU/sum(TAU)) %>% 
+  select(MDD_Post, Overall, Overall.p, ADAPT, ADAPT.p, TAU, TAU.p) %>% 
+  adorn_totals(where = "row") %>% 
+  kable(format = "html", booktabs = TRUE, digits = 1,
+        col.names = c("MDD at Posttest", "N", "%", "N", "%", "N", "%")) %>% 
+  kable_styling() %>% 
+  add_header_above(header = c(" ", "Overall" = 2, "ADAPT" = 2, "TAU" = 2)) %>% 
+  add_header_above(header = c(" " = 3, "Arm" = 4)) %>% 
+  footnote(kable_input = ., general = FN, footnote_as_chunk = TRUE, 
+           threeparttable = TRUE) %>% 
+  cat()
+```
 
 ```{r}
 #| label: tbl-xtabs-MDD
@@ -618,23 +1098,6 @@ ADAPT_Clean_Data %>%
   row_spec(row = 4, bold = TRUE) %>% 
   column_spec(column = 5, bold = TRUE) %>% 
   add_header_above(header = c(" ", "Diagnosed at Posttest" = 3, " "))
-```
-
-```{r}
-#| label: tbl-MDD-Change
-#| tbl-cap: "Change in Diagnosis with GAD Over Time"
-
-ADAPT_Clean_Data %>% 
-  mutate(Dx_Change = addNA(MDD_Change)) %>% 
-  group_by(Dx_Change, .drop = FALSE) %>% 
-  summarise(N = n()) %>% 
-  mutate(Percent = 100*N/sum(N)) %>% 
-  ungroup() %>% 
-  adorn_totals(where = "row", name = "Sum") %>%
-  kable(format = "html", digits = 0,
-        col.names = c("Diagnosis Change", "N", "%")) %>% 
-  kable_styling() %>% 
-  row_spec(row = 5, bold = TRUE)
 ```
 
 ```{r}
@@ -666,23 +1129,102 @@ ADAPT_Clean_Data %>%
 ```{r}
 #| label: tbl-MDD-Change-Arm
 #| tbl-cap: "Change in Diagnosis with MDD Over Time by Arm"
+#| results: asis
+
+CT <- ADAPT_Clean_Data %>% 
+  xtabs(~ MDD_Change + Arm, addNA = TRUE, data = .) 
+
+FN <- paste0("Two-sided Fisher's exact test for independence, p = ", 
+             display_num(fisher.test(x = CT)$p.value), ".")
 
 ADAPT_Clean_Data %>% 
   mutate(Dx_Change = addNA(MDD_Change)) %>% 
   group_by(Arm, Dx_Change, .drop = FALSE) %>% 
   summarise(N = n()) %>% 
-  mutate(Percent = 100*N/sum(N)) %>% 
-  group_modify(~ .x %>% adorn_totals(where = "row")) %>%
-  ungroup() %>% 
+  pivot_wider(id_cols = Dx_Change, names_from = Arm, values_from = N) %>% 
+  mutate(Overall = ADAPT + TAU, 
+         Overall.p = 100*Overall/sum(Overall),
+         ADAPT.p = 100*ADAPT/sum(ADAPT),
+         TAU.p = 100*TAU/sum(TAU)) %>% 
+  select(Dx_Change, Overall, Overall.p, ADAPT, ADAPT.p, TAU, TAU.p) %>% 
+  adorn_totals(where = "row") %>%
   kable(format = "html", digits = 0,
-        col.names = c("Arm", "Diagnosis Change", "N", "%")) %>% 
+        col.names = c("MDD Change", "N", "%", "N", "%", "N", "%")) %>% 
   kable_styling() %>% 
-  row_spec(row = c(5,10), bold = TRUE) %>% 
-  collapse_rows(columns = 1:2, valign = "top", latex_hline = "major", 
-                row_group_label_position = "stack")
+  add_header_above(header = c(" ", "Overall" = 2, "ADAPT" = 2, "TAU" = 2)) %>% 
+  add_header_above(header = c(" " = 3, "Arm" = 4)) %>% 
+  footnote(kable_input = ., general = FN, footnote_as_chunk = TRUE, 
+           threeparttable = TRUE) %>% 
+  cat()
 ```
 
 ### Dysthymia (`Dysthymia_Pre`, `Dysthymia_Post`)
+
+```{r}
+#| label: tbl-Dysthymia-pre
+#| tbl-cap: Contingency Table for Dysthymia Diagnosis at Baseline by Arm
+#| message: false
+#| results: asis
+
+CT <- ADAPT_Clean_Data %>% 
+  xtabs(~ Dysthymia_Pre + Arm, addNA = TRUE, data = .) 
+
+FN <- paste0("Two-sided Fisher's exact test for independence, p = ", 
+             display_num(fisher.test(x = CT)$p.value), ".")
+  
+ADAPT_Clean_Data %>% 
+  mutate(Dysthymia_Pre = addNA(Dysthymia_Pre)) %>% 
+  group_by(Arm, Dysthymia_Pre, .drop = FALSE) %>% 
+  summarize(N = n()) %>% 
+  pivot_wider(id_cols = Dysthymia_Pre, names_from = Arm, values_from = N) %>% 
+  mutate(Overall = ADAPT + TAU, 
+         Overall.p = 100*Overall/sum(Overall),
+         ADAPT.p = 100*ADAPT/sum(ADAPT),
+         TAU.p = 100*TAU/sum(TAU)) %>% 
+  select(Dysthymia_Pre, Overall, Overall.p, ADAPT, ADAPT.p, TAU, TAU.p) %>% 
+  adorn_totals(where = "row") %>% 
+  kable(format = "html", booktabs = TRUE, digits = 1,
+        col.names = c("Dysthymia at Baseline", "N", "%", "N", "%", "N", "%")) %>% 
+  kable_styling() %>% 
+  add_header_above(header = c(" ", "Overall" = 2, "ADAPT" = 2, "TAU" = 2)) %>% 
+  add_header_above(header = c(" " = 3, "Arm" = 4)) %>% 
+  footnote(kable_input = ., general = FN, footnote_as_chunk = TRUE, 
+           threeparttable = TRUE) %>% 
+  cat()
+```
+
+```{r}
+#| label: tbl-Dysthymia-post
+#| tbl-cap: Contingency Table for Dysthymia Diagnosis at Posttest by Arm
+#| message: false
+#| results: asis
+
+CT <- ADAPT_Clean_Data %>% 
+  xtabs(~ Dysthymia_Post + Arm, addNA = TRUE, data = .) 
+
+FN <- paste0("Two-sided Fisher's exact test for independence, p = ", 
+             display_num(fisher.test(x = CT)$p.value), ".")
+  
+ADAPT_Clean_Data %>% 
+  mutate(Dysthymia_Post = addNA(Dysthymia_Post)) %>% 
+  group_by(Arm, Dysthymia_Post, .drop = FALSE) %>% 
+  summarize(N = n()) %>% 
+  pivot_wider(id_cols = Dysthymia_Post, names_from = Arm, values_from = N) %>% 
+  mutate(Overall = ADAPT + TAU, 
+         Overall.p = 100*Overall/sum(Overall),
+         ADAPT.p = 100*ADAPT/sum(ADAPT),
+         TAU.p = 100*TAU/sum(TAU)) %>% 
+  select(Dysthymia_Post, Overall, Overall.p, ADAPT, ADAPT.p, TAU, TAU.p) %>% 
+  adorn_totals(where = "row") %>% 
+  kable(format = "html", booktabs = TRUE, digits = 1,
+        col.names = c("Dysthymia at Posttest", "N", "%", "N", "%", "N", "%")) %>% 
+  kable_styling() %>% 
+  add_header_above(header = c(" ", "Overall" = 2, "ADAPT" = 2, "TAU" = 2)) %>% 
+  add_header_above(header = c(" " = 3, "Arm" = 4)) %>% 
+  footnote(kable_input = ., general = FN, footnote_as_chunk = TRUE, 
+           threeparttable = TRUE) %>% 
+  cat()
+```
 
 ```{r}
 #| label: tbl-xtabs-Dysthymia
@@ -706,23 +1248,6 @@ ADAPT_Clean_Data %>%
   row_spec(row = 4, bold = TRUE) %>% 
   column_spec(column = 5, bold = TRUE) %>% 
   add_header_above(header = c(" ", "Diagnosed at Posttest" = 3, " "))
-```
-
-```{r}
-#| label: tbl-Dysthymia-Change
-#| tbl-cap: "Change in Diagnosis with Dysthymia Over Time"
-
-ADAPT_Clean_Data %>% 
-  mutate(Dx_Change = addNA(Dysthymia_Change)) %>% 
-  group_by(Dx_Change, .drop = FALSE) %>% 
-  summarise(N = n()) %>% 
-  mutate(Percent = 100*N/sum(N)) %>% 
-  ungroup() %>% 
-  adorn_totals(where = "row", name = "Sum") %>%
-  kable(format = "html", digits = 0,
-        col.names = c("Diagnosis Change", "N", "%")) %>% 
-  kable_styling() %>% 
-  row_spec(row = 5, bold = TRUE)
 ```
 
 ```{r}
@@ -754,20 +1279,33 @@ ADAPT_Clean_Data %>%
 ```{r}
 #| label: tbl-Dysthymia-Change-Arm
 #| tbl-cap: "Change in Diagnosis with Dysthymia Over Time by Arm"
+#| results: asis
+
+CT <- ADAPT_Clean_Data %>% 
+  xtabs(~ Dysthymia_Change + Arm, addNA = TRUE, data = .) 
+
+FN <- paste0("Two-sided Fisher's exact test for independence, p = ", 
+             display_num(fisher.test(x = CT)$p.value), ".")
 
 ADAPT_Clean_Data %>% 
   mutate(Dx_Change = addNA(Dysthymia_Change)) %>% 
   group_by(Arm, Dx_Change, .drop = FALSE) %>% 
   summarise(N = n()) %>% 
-  mutate(Percent = 100*N/sum(N)) %>% 
-  group_modify(~ .x %>% adorn_totals(where = "row")) %>%
-  ungroup() %>% 
+  pivot_wider(id_cols = Dx_Change, names_from = Arm, values_from = N) %>% 
+  mutate(Overall = ADAPT + TAU, 
+         Overall.p = 100*Overall/sum(Overall),
+         ADAPT.p = 100*ADAPT/sum(ADAPT),
+         TAU.p = 100*TAU/sum(TAU)) %>% 
+  select(Dx_Change, Overall, Overall.p, ADAPT, ADAPT.p, TAU, TAU.p) %>% 
+  adorn_totals(where = "row") %>%
   kable(format = "html", digits = 0,
-        col.names = c("Arm", "Diagnosis Change", "N", "%")) %>% 
+        col.names = c("Dysthymia Change", "N", "%", "N", "%", "N", "%")) %>% 
   kable_styling() %>% 
-  row_spec(row = c(5,10), bold = TRUE) %>% 
-  collapse_rows(columns = 1:2, valign = "top", latex_hline = "major", 
-                row_group_label_position = "stack")
+  add_header_above(header = c(" ", "Overall" = 2, "ADAPT" = 2, "TAU" = 2)) %>% 
+  add_header_above(header = c(" " = 3, "Arm" = 4)) %>% 
+  footnote(kable_input = ., general = FN, footnote_as_chunk = TRUE, 
+           threeparttable = TRUE) %>% 
+  cat()
 ```
 
 # Logistic Regression on Imputed Data
