@@ -1708,12 +1708,12 @@ predictors. That causes problems with maximum likelihood estimation of the model
 parameters. While there is a potential solution to that via penalized 
 estimation, it may be simpler just to not report this outcome. 
 
-Look at the raw descriptive data in @tbl-OCD-Change and @tbl-OCD-Change-Arm. 
-They show that *none of the patients in the study ever worsened*. For all the
-other outcomes, at least a few people did worsen, even if it was only in one
-study arm. So, the OCD outcome is unusual in that respect. 
+Look at the raw descriptive data in @tbl-OCD-Change-Arm. They show that 
+*none of the patients in the study ever worsened*. For all the other outcomes, 
+at least a few people did worsen, even if it was only in one study arm. So, the
+OCD outcome is unusual in that respect.
 
-Because the model is not producing trustorthy results, I am disabling the code 
+Because the model is not producing trustworthy results, I am disabling the code 
 below that would have estimated the marginal means and the difference between 
 them for this outcome. 
 :::
