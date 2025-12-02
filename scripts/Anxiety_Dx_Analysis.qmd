@@ -147,7 +147,7 @@ ADAPT_Clean_Data %>%
                           Arm == "TAU" ~ "Control",
                           Arm == "Sum" ~ "Intervention + Control")) %>% 
   select(Arm, Type, Freq) %>% 
-  kable(format = "html", booktabs = TRUE, 
+  kable(format = "html",  
         col.names = c("Randomized Arm", "Type", "Frequency")) %>% 
   kable_styling(bootstrap_options = "striped") 
 ```
@@ -178,7 +178,7 @@ ADAPT_Clean_Data %>%
          TAU.p = 100*TAU/sum(TAU)) %>% 
   select(Gender, Overall, Overall.p, ADAPT, ADAPT.p, TAU, TAU.p) %>% 
   adorn_totals(where = "row") %>% 
-  kable(format = "html", booktabs = TRUE, digits = 1,
+  kable(format = "html", digits = 1,
         col.names = c("Gender", "N", "%", "N", "%", "N", "%")) %>% 
   kable_styling() %>% 
   add_header_above(header = c(" ", "Overall" = 2, "ADAPT" = 2, "TAU" = 2)) %>% 
@@ -212,7 +212,7 @@ ADAPT_Clean_Data %>%
          TAU.p = 100*TAU/sum(TAU)) %>% 
   select(Age, Overall, Overall.p, ADAPT, ADAPT.p, TAU, TAU.p) %>% 
   adorn_totals(where = "row") %>% 
-  kable(format = "html", booktabs = TRUE, digits = 1,
+  kable(format = "html", digits = 1,
         col.names = c("Age (yrs)", "N", "%", "N", "%", "N", "%")) %>% 
   kable_styling() %>% 
   add_header_above(header = c(" ", "Overall" = 2, "ADAPT" = 2, "TAU" = 2)) %>% 
@@ -246,7 +246,7 @@ ADAPT_Clean_Data %>%
          TAU.p = 100*TAU/sum(TAU)) %>% 
   select(race_cat, Overall, Overall.p, ADAPT, ADAPT.p, TAU, TAU.p) %>% 
   adorn_totals(where = "row") %>% 
-  kable(format = "html", booktabs = TRUE, digits = 1,
+  kable(format = "html", digits = 1,
         col.names = c("Race", "N", "%", "N", "%", "N", "%")) %>% 
   kable_styling() %>% 
   add_header_above(header = c(" ", "Overall" = 2, "ADAPT" = 2, "TAU" = 2)) %>% 
@@ -283,7 +283,7 @@ ADAPT_Clean_Data %>%
          TAU.p = 100*TAU/sum(TAU)) %>% 
   select(GAD_Pre, Overall, Overall.p, ADAPT, ADAPT.p, TAU, TAU.p) %>% 
   adorn_totals(where = "row") %>% 
-  kable(format = "html", booktabs = TRUE, digits = 1,
+  kable(format = "html", digits = 1,
         col.names = c("GAD at Baseline", "N", "%", "N", "%", "N", "%")) %>% 
   kable_styling() %>% 
   add_header_above(header = c(" ", "Overall" = 2, "ADAPT" = 2, "TAU" = 2)) %>% 
@@ -316,7 +316,7 @@ ADAPT_Clean_Data %>%
          TAU.p = 100*TAU/sum(TAU)) %>% 
   select(GAD_Post, Overall, Overall.p, ADAPT, ADAPT.p, TAU, TAU.p) %>% 
   adorn_totals(where = "row") %>% 
-  kable(format = "html", booktabs = TRUE, digits = 1,
+  kable(format = "html", digits = 1,
         col.names = c("GAD at Posttest", "N", "%", "N", "%", "N", "%")) %>% 
   kable_styling() %>% 
   add_header_above(header = c(" ", "Overall" = 2, "ADAPT" = 2, "TAU" = 2)) %>% 
@@ -379,6 +379,7 @@ ADAPT_Clean_Data %>%
 ```{r}
 #| label: tbl-GAD-Change-Arm
 #| tbl-cap: "Change in Diagnosis with GAD Over Time by Arm"
+#| message: false
 #| results: asis
 
 CT <- ADAPT_Clean_Data %>% 
@@ -466,7 +467,7 @@ ADAPT_Clean_Data %>%
          TAU.p = 100*TAU/sum(TAU)) %>% 
   select(Social_Post, Overall, Overall.p, ADAPT, ADAPT.p, TAU, TAU.p) %>% 
   adorn_totals(where = "row") %>% 
-  kable(format = "html", booktabs = TRUE, digits = 1,
+  kable(format = "html", digits = 1,
         col.names = c("Social Anxiety Disorder at Posttest", "N", "%", "N", "%", "N", "%")) %>% 
   kable_styling() %>% 
   add_header_above(header = c(" ", "Overall" = 2, "ADAPT" = 2, "TAU" = 2)) %>% 
@@ -529,6 +530,7 @@ ADAPT_Clean_Data %>%
 ```{r}
 #| label: tbl-Social-Change-Arm
 #| tbl-cap: "Change in Diagnosis with Social Anxiety Disorder Over Time by Arm"
+#| message: false
 #| results: asis
 
 CT <- ADAPT_Clean_Data %>% 
@@ -583,7 +585,7 @@ ADAPT_Clean_Data %>%
          TAU.p = 100*TAU/sum(TAU)) %>% 
   select(SAD_Pre, Overall, Overall.p, ADAPT, ADAPT.p, TAU, TAU.p) %>% 
   adorn_totals(where = "row") %>% 
-  kable(format = "html", booktabs = TRUE, digits = 1,
+  kable(format = "html", digits = 1,
         col.names = c("SAD at Baseline", "N", "%", "N", "%", "N", "%")) %>% 
   kable_styling() %>% 
   add_header_above(header = c(" ", "Overall" = 2, "ADAPT" = 2, "TAU" = 2)) %>% 
@@ -616,7 +618,7 @@ ADAPT_Clean_Data %>%
          TAU.p = 100*TAU/sum(TAU)) %>% 
   select(SAD_Post, Overall, Overall.p, ADAPT, ADAPT.p, TAU, TAU.p) %>% 
   adorn_totals(where = "row") %>% 
-  kable(format = "html", booktabs = TRUE, digits = 1,
+  kable(format = "html", digits = 1,
         col.names = c("SAD at Posttest", "N", "%", "N", "%", "N", "%")) %>% 
   kable_styling() %>% 
   add_header_above(header = c(" ", "Overall" = 2, "ADAPT" = 2, "TAU" = 2)) %>% 
@@ -679,6 +681,7 @@ ADAPT_Clean_Data %>%
 ```{r}
 #| label: tbl-SAD-Change-Arm
 #| tbl-cap: "Change in Diagnosis with SAD Over Time by Arm"
+#| message: false
 #| results: asis
 
 CT <- ADAPT_Clean_Data %>% 
@@ -733,7 +736,7 @@ ADAPT_Clean_Data %>%
          TAU.p = 100*TAU/sum(TAU)) %>% 
   select(Panic_Pre, Overall, Overall.p, ADAPT, ADAPT.p, TAU, TAU.p) %>% 
   adorn_totals(where = "row") %>% 
-  kable(format = "html", booktabs = TRUE, digits = 1,
+  kable(format = "html", digits = 1,
         col.names = c("Panic Disorder at Baseline", "N", "%", "N", "%", "N", "%")) %>% 
   kable_styling() %>% 
   add_header_above(header = c(" ", "Overall" = 2, "ADAPT" = 2, "TAU" = 2)) %>% 
@@ -766,7 +769,7 @@ ADAPT_Clean_Data %>%
          TAU.p = 100*TAU/sum(TAU)) %>% 
   select(Panic_Post, Overall, Overall.p, ADAPT, ADAPT.p, TAU, TAU.p) %>% 
   adorn_totals(where = "row") %>% 
-  kable(format = "html", booktabs = TRUE, digits = 1,
+  kable(format = "html", digits = 1,
         col.names = c("Panic Disorder at Posttest", "N", "%", "N", "%", "N", "%")) %>% 
   kable_styling() %>% 
   add_header_above(header = c(" ", "Overall" = 2, "ADAPT" = 2, "TAU" = 2)) %>% 
@@ -829,6 +832,7 @@ ADAPT_Clean_Data %>%
 ```{r}
 #| label: tbl-Panic-Change-Arm
 #| tbl-cap: "Change in Diagnosis with Panic Disorder Over Time by Arm"
+#| message: false
 #| results: asis
 
 CT <- ADAPT_Clean_Data %>% 
@@ -883,7 +887,7 @@ ADAPT_Clean_Data %>%
          TAU.p = 100*TAU/sum(TAU)) %>% 
   select(OCD_Pre, Overall, Overall.p, ADAPT, ADAPT.p, TAU, TAU.p) %>% 
   adorn_totals(where = "row") %>% 
-  kable(format = "html", booktabs = TRUE, digits = 1,
+  kable(format = "html", digits = 1,
         col.names = c("OCD at Baseline", "N", "%", "N", "%", "N", "%")) %>% 
   kable_styling() %>% 
   add_header_above(header = c(" ", "Overall" = 2, "ADAPT" = 2, "TAU" = 2)) %>% 
@@ -916,7 +920,7 @@ ADAPT_Clean_Data %>%
          TAU.p = 100*TAU/sum(TAU)) %>% 
   select(OCD_Post, Overall, Overall.p, ADAPT, ADAPT.p, TAU, TAU.p) %>% 
   adorn_totals(where = "row") %>% 
-  kable(format = "html", booktabs = TRUE, digits = 1,
+  kable(format = "html", digits = 1,
         col.names = c("OCD at Posttest", "N", "%", "N", "%", "N", "%")) %>% 
   kable_styling() %>% 
   add_header_above(header = c(" ", "Overall" = 2, "ADAPT" = 2, "TAU" = 2)) %>% 
@@ -979,6 +983,7 @@ ADAPT_Clean_Data %>%
 ```{r}
 #| label: tbl-OCD-Change-Arm
 #| tbl-cap: "Change in Diagnosis with OCD Over Time by Arm"
+#| message: false
 #| results: asis
 
 CT <- ADAPT_Clean_Data %>% 
@@ -1033,7 +1038,7 @@ ADAPT_Clean_Data %>%
          TAU.p = 100*TAU/sum(TAU)) %>% 
   select(MDD_Pre, Overall, Overall.p, ADAPT, ADAPT.p, TAU, TAU.p) %>% 
   adorn_totals(where = "row") %>% 
-  kable(format = "html", booktabs = TRUE, digits = 1,
+  kable(format = "html", digits = 1,
         col.names = c("MDD at Baseline", "N", "%", "N", "%", "N", "%")) %>% 
   kable_styling() %>% 
   add_header_above(header = c(" ", "Overall" = 2, "ADAPT" = 2, "TAU" = 2)) %>% 
@@ -1066,7 +1071,7 @@ ADAPT_Clean_Data %>%
          TAU.p = 100*TAU/sum(TAU)) %>% 
   select(MDD_Post, Overall, Overall.p, ADAPT, ADAPT.p, TAU, TAU.p) %>% 
   adorn_totals(where = "row") %>% 
-  kable(format = "html", booktabs = TRUE, digits = 1,
+  kable(format = "html", digits = 1,
         col.names = c("MDD at Posttest", "N", "%", "N", "%", "N", "%")) %>% 
   kable_styling() %>% 
   add_header_above(header = c(" ", "Overall" = 2, "ADAPT" = 2, "TAU" = 2)) %>% 
@@ -1129,6 +1134,7 @@ ADAPT_Clean_Data %>%
 ```{r}
 #| label: tbl-MDD-Change-Arm
 #| tbl-cap: "Change in Diagnosis with MDD Over Time by Arm"
+#| message: false
 #| results: asis
 
 CT <- ADAPT_Clean_Data %>% 
@@ -1183,7 +1189,7 @@ ADAPT_Clean_Data %>%
          TAU.p = 100*TAU/sum(TAU)) %>% 
   select(Dysthymia_Pre, Overall, Overall.p, ADAPT, ADAPT.p, TAU, TAU.p) %>% 
   adorn_totals(where = "row") %>% 
-  kable(format = "html", booktabs = TRUE, digits = 1,
+  kable(format = "html", digits = 1,
         col.names = c("Dysthymia at Baseline", "N", "%", "N", "%", "N", "%")) %>% 
   kable_styling() %>% 
   add_header_above(header = c(" ", "Overall" = 2, "ADAPT" = 2, "TAU" = 2)) %>% 
@@ -1216,7 +1222,7 @@ ADAPT_Clean_Data %>%
          TAU.p = 100*TAU/sum(TAU)) %>% 
   select(Dysthymia_Post, Overall, Overall.p, ADAPT, ADAPT.p, TAU, TAU.p) %>% 
   adorn_totals(where = "row") %>% 
-  kable(format = "html", booktabs = TRUE, digits = 1,
+  kable(format = "html", digits = 1,
         col.names = c("Dysthymia at Posttest", "N", "%", "N", "%", "N", "%")) %>% 
   kable_styling() %>% 
   add_header_above(header = c(" ", "Overall" = 2, "ADAPT" = 2, "TAU" = 2)) %>% 
@@ -1279,6 +1285,7 @@ ADAPT_Clean_Data %>%
 ```{r}
 #| label: tbl-Dysthymia-Change-Arm
 #| tbl-cap: "Change in Diagnosis with Dysthymia Over Time by Arm"
+#| message: false
 #| results: asis
 
 CT <- ADAPT_Clean_Data %>% 
@@ -1384,7 +1391,7 @@ parameters_GAD <- left_join(CIs_GAD, OR_GAD, by = join_by(term)) %>%
   relocate(Term, Estimate, SE, Est.LL, Est.UL, OR, OR.LL, OR.UL, z, p) 
   
 parameters_GAD %>% 
-  kable(., format = "html", booktabs = TRUE, digits = 3) %>% 
+  kable(., format = "html", digits = 3) %>% 
   kable_styling() %>% 
   add_header_above(header = c(" " = 3, "95% CI" = 2, " ", "OR 95% CI" = 2, 
                               "Wald Test" = 2, "Imputation Details" = 8)) %>% 
@@ -1459,7 +1466,7 @@ parameters_Social <- left_join(CIs_Social, OR_Social, by = join_by(term)) %>%
   relocate(Term, Estimate, SE, Est.LL, Est.UL, OR, OR.LL, OR.UL, z, p) 
   
 parameters_Social %>% 
-  kable(., format = "html", booktabs = TRUE, digits = 3) %>% 
+  kable(., format = "html", digits = 3) %>% 
   kable_styling() %>% 
   add_header_above(header = c(" " = 3, "95% CI" = 2, " ", "OR 95% CI" = 2, 
                               "Wald Test" = 2, "Imputation Details" = 8)) %>% 
@@ -1534,7 +1541,7 @@ parameters_SAD <- left_join(CIs_SAD, OR_SAD, by = join_by(term)) %>%
   relocate(Term, Estimate, SE, Est.LL, Est.UL, OR, OR.LL, OR.UL, z, p) 
   
 parameters_SAD %>% 
-  kable(., format = "html", booktabs = TRUE, digits = 3) %>% 
+  kable(., format = "html", digits = 3) %>% 
   kable_styling() %>% 
   add_header_above(header = c(" " = 3, "95% CI" = 2, " ", "OR 95% CI" = 2, 
                               "Wald Test" = 2, "Imputation Details" = 8)) %>% 
@@ -1609,7 +1616,7 @@ parameters_Panic <- left_join(CIs_Panic, OR_Panic, by = join_by(term)) %>%
   relocate(Term, Estimate, SE, Est.LL, Est.UL, OR, OR.LL, OR.UL, z, p) 
   
 parameters_Panic %>% 
-  kable(., format = "html", booktabs = TRUE, digits = 3) %>% 
+  kable(., format = "html", digits = 3) %>% 
   kable_styling() %>% 
   add_header_above(header = c(" " = 3, "95% CI" = 2, " ", "OR 95% CI" = 2, 
                               "Wald Test" = 2, "Imputation Details" = 8)) %>% 
@@ -1684,7 +1691,7 @@ parameters_OCD <- left_join(CIs_OCD, OR_OCD, by = join_by(term)) %>%
   relocate(Term, Estimate, SE, Est.LL, Est.UL, OR, OR.LL, OR.UL, z, p) 
   
 parameters_OCD %>% 
-  kable(., format = "html", booktabs = TRUE, digits = 3) %>% 
+  kable(., format = "html", digits = 3) %>% 
   kable_styling() %>% 
   add_header_above(header = c(" " = 3, "95% CI" = 2, " ", "OR 95% CI" = 2, 
                               "Wald Test" = 2, "Imputation Details" = 8)) %>% 
@@ -1781,7 +1788,7 @@ parameters_MDD <- left_join(CIs_MDD, OR_MDD, by = join_by(term)) %>%
   relocate(Term, Estimate, SE, Est.LL, Est.UL, OR, OR.LL, OR.UL, z, p) 
   
 parameters_MDD %>% 
-  kable(., format = "html", booktabs = TRUE, digits = 3) %>% 
+  kable(., format = "html", digits = 3) %>% 
   kable_styling() %>% 
   add_header_above(header = c(" " = 3, "95% CI" = 2, " ", "OR 95% CI" = 2, 
                               "Wald Test" = 2, "Imputation Details" = 8)) %>% 
@@ -1856,7 +1863,7 @@ parameters_Dysthymia <- left_join(CIs_Dysthymia, OR_Dysthymia, by = join_by(term
   relocate(Term, Estimate, SE, Est.LL, Est.UL, OR, OR.LL, OR.UL, z, p) 
   
 parameters_Dysthymia %>% 
-  kable(., format = "html", booktabs = TRUE, digits = 3) %>% 
+  kable(., format = "html", digits = 3) %>% 
   kable_styling() %>% 
   add_header_above(header = c(" " = 3, "95% CI" = 2, " ", "OR 95% CI" = 2, 
                               "Wald Test" = 2, "Imputation Details" = 8)) %>% 
