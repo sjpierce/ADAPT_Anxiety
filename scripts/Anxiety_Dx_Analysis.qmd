@@ -93,7 +93,7 @@ library(janitor)      # for adorn_totals()
 library(broom)        # for tidy()
 library(emmeans)      # for emmeans(), contrast()
 library(mice)         # for mice(), pool(), etc. 
-library(piercer)      # for all_classes()
+library(piercer)      # for all_classes(), file_details()
 library(quarto)       # for quarto_version()
 ```
 
@@ -111,6 +111,7 @@ This script assumes you have already used
 ``` {r}
 #| label: load-ADAPT-Clean-Data
 
+file_details(here("data/ADAPT_Clean.RData"))
 load(file=here("data/ADAPT_Clean.RData"))
 ```
 
@@ -121,6 +122,7 @@ with the subset of the raw data that was used in the imputation process.
 ``` {r}
 #| label: load-ADAPT-Imputed-Data
 
+file_details(here("data/ADAPT_Imputed.RData"))
 load(file=here("data/ADAPT_Imputed.RData"))
 ```
 
