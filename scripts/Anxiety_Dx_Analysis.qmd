@@ -1702,7 +1702,7 @@ parameters_OCD %>%
 :::{.callout-important}
 The extremely large standard errors for the intercept and OCD_Pre terms in  
 @tbl-parameters-OCD are a sign that we have encountered a problem with 
-separation [@Heinze-RN1125]. Brielfy stated, this happens when there is very 
+separation [@Heinze-RN1125]. Briefly stated, this happens when there is very 
 little variability in the outcome at some combinations of values on the 
 predictors. That causes problems with maximum likelihood estimation of the model 
 parameters. While there is a potential solution to that via penalized 
