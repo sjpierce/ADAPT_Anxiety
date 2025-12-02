@@ -511,56 +511,12 @@ ADAPT_Imputed_Data <- mice(data = ADAPT_PreImpute, m = 18, pred = Predictors,
                            printFlag = FALSE)
 ```
 
-## Diagnostics: Traceplots
-@fig-traceplots-scores-pre, @fig-traceplots-outcome-pre, 
-@fig-traceplots-scores-post, and @fig-traceplots-outcome-post show trace plots 
-for batches of variables that let us assess whether the imputation model has 
-converged. We need to reach convergence before we can rely on the results. 
-
-```{r}
-#| label: fig-traceplots-scores-pre
-#| fig-cap: Imputation Trace Plot
-#| fig-height: 7
-#| fig-wdith: 7
-
-plot_trace(ADAPT_Imputed_Data, 
-           vrb = c("DASS_Tot_Pre", "SCARED_Tot_Pre"))
-```
-
-```{r}
-#| label: fig-traceplots-outcome-pre
-#| fig-cap: Imputation Trace Plot
-#| fig-height: 7
-#| fig-wdith: 7
-
-plot_trace(ADAPT_Imputed_Data, 
-           vrb = c("GAD_Pre", "Social_Pre", "SAD_Pre", "Panic_Pre", "OCD_Pre", 
-                   "MDD_Pre", "Dysthymia_Pre"))
-```
-
-```{r}
-#| label: fig-traceplots-scores-post
-#| fig-cap: Imputation Trace Plot
-#| fig-height: 7
-#| fig-wdith: 7
-
-plot_trace(ADAPT_Imputed_Data, 
-           vrb = c("DASS_Tot_Post", "SCARED_Tot_Post", "CDI_Tot_Post", 
-                   "PCS_Tot_Post", "FDI_Tot_Post"))
-```
-
-```{r}
-#| label: fig-traceplots-outcome-post
-#| fig-cap: Imputation Trace Plot
-#| fig-height: 7
-#| fig-wdith: 7
-
-plot_trace(ADAPT_Imputed_Data, 
-           vrb = c("GAD_Post", "Social_Post", "SAD_Post", "Panic_Post",
-                   "OCD_Post", "MDD_Post", "Dysthymia_Post"))
-```
-
 ## Diagnostics: Logged Events
+If `mice()` produced any logged event messages, @tbl-logged-events will have 
+data in it. If not, the table content is omitted and just the table title will
+show up as a placeholder. It is best if there are no logged events because those
+indicate problems that would need to be solved before we can use the imputed
+data.
 
 ```{r}
 #| label: tbl-logged-events
@@ -572,6 +528,49 @@ if(!is.null(ADAPT_Imputed_Data$loggedEvents)){
   kable() %>% 
   kable_styling() 
 } 
+```
+
+## Diagnostics: Traceplots
+@fig-traceplots-scores-pre, @fig-traceplots-scores-post, and 
+@fig-traceplots-outcome-post show trace plots for batches of variables that let 
+us assess whether the imputation model has converged. We need to reach 
+convergence before we can rely on the results. We cannot get tracelplots for 
+a variables that only had one missing value (i.e., `SCARED_Tot_Pre`, and all 
+the pretest binary outcomes `GAD_Pre`, `Social_Pre`, `SAD_Pre`, `Panic_Pre`, 
+`OCD_Pre`, `MDD_Pre`, `Dysthymia_Pre`) because `plot_trace()` cannot get 
+convergence diagnostics (i.e., the standard deviation cannot be computed). 
+
+```{r}
+#| label: fig-traceplots-scores-pre
+#| fig-cap: Imputation Trace Plot
+#| fig-height: 1.5
+#| fig-wdith: 7
+
+plot_trace(ADAPT_Imputed_Data, vrb = c("DASS_Tot_Pre"), legend = FALSE)
+```
+
+```{r}
+#| label: fig-traceplots-scores-post
+#| fig-cap: Imputation Trace Plot
+#| fig-height: 5.5
+#| fig-wdith: 7
+
+plot_trace(ADAPT_Imputed_Data,
+           vrb = c("DASS_Tot_Post", "SCARED_Tot_Post", "CDI_Tot_Post", 
+                   "PCS_Tot_Post", "FDI_Tot_Post"), 
+           legend = FALSE)
+```
+
+```{r}
+#| label: fig-traceplots-outcome-post
+#| fig-cap: Imputation Trace Plot
+#| fig-height: 7.5
+#| fig-wdith: 7
+
+plot_trace(ADAPT_Imputed_Data, 
+           vrb = c("GAD_Post", "Social_Post", "SAD_Post", "Panic_Post",
+                   "OCD_Post", "MDD_Post", "Dysthymia_Post"), 
+           legend = FALSE)
 ```
 
 ## Diagnostics: Continuous Variable Distributions
@@ -653,6 +652,20 @@ map(c("FDI_Tot_Pre", "FDI_Tot_Post"), ~ {
 ```
 
 ## Diagnostics: Binary Variable Distributions
+
+```{r}
+#| label: fig-barplots-GAD
+#| fig-cap: Distributions of Observed and Imputed GAD Diagnoses at Pretest and 
+#|          Posttest by Imputation Number
+
+map(c("GAD_Pre", "GAD_Post"), ~ {
+  ggmice(ADAPT_Imputed_Data, mapping = aes(x = .data[[.x]])) + 
+  geom_bar(fill = "white", stat = "count") + 
+  scale_y_continuous(limits = c(0, 70), breaks = seq(from = 0, to = 70, by = 20)) +
+  facet_wrap(~ .imp, nrow = 1) + 
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))}) %>%
+  wrap_plots(nrow = 2)
+```
 
 ```{r}
 #| label: fig-barplots-Social
