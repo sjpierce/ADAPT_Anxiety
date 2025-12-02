@@ -242,6 +242,7 @@ We used [R](https://www.r-project.org/) as our main computing environment and
   files (`*.md`) to other formats, including LaTeX (`*.tex`) and HTML (`*.html`) 
   among others.
 
+## Versions
 This document was generated using the following computational environment and 
 dependencies: 
 
@@ -262,3 +263,4 @@ The current Git commit details and status are:
 
 git_report()
 ```
+

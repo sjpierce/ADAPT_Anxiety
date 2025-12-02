@@ -94,7 +94,7 @@ library(tidyverse)    # Loads the dplyr, forcats, ggplot2, lubridate, purrr,
                       # readr, stringr, tibble, and tidyr packages, for access 
                       # to %>%, select(), mutate(), etc. 
 library(labelled)     # for set_variable_labels(), var_label()
-library(piercer)      # for all_classes()
+library(piercer)      # for all_classes(), file_details(), git_report()
 library(janitor)      # for adorn_totals()
 library(mice)         # for mice(), flux(), etc. 
 library(ggmice)       # for plot_pattern(), plot_corr()
@@ -114,6 +114,7 @@ create the data file `data/ADAPT_Clean.RData`.
 ``` {r}
 #| label: load-ADAPT-Clean-Data
 
+file_details(here("data/ADAPT_Clean.RData"))
 load(file=here("data/ADAPT_Clean.RData"))
 ```
 
@@ -761,6 +762,7 @@ map(c("Dysthymia_Pre", "Dysthymia_Post"), ~ {
 # Save the current working version of the clean data. 
 save(ADAPT_PreImpute, ADAPT_Imputed_Data, 
      file=here("data/ADAPT_Imputed.RData"))
+file_details(here("data/ADAPT_Imputed.RData"))
 ```
 
 The data file can be loaded into R by copying the following code chunk into a
@@ -795,6 +797,7 @@ We used [R](https://www.r-project.org/) as our main computing environment and
   files (`*.md`) to other formats, including LaTeX (`*.tex`) and HTML (`*.html`) 
   among others.
 
+## Versions
 This document was generated using the following computational environment and 
 dependencies: 
 
@@ -806,3 +809,12 @@ dependencies:
 devtools::session_info()
 ```
 
+## Git Details
+The current Git commit details and status are:
+
+``` {r}
+#| label: git-details
+#| echo: true
+
+git_report()
+```

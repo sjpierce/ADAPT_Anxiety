@@ -91,7 +91,7 @@ library(tidyverse)    # Loads the dplyr, forcats, ggplot2, lubridate, purrr,
 library(haven)        # for read_spss().
 library(labelled)     # for set_variable_labels(), var_label()
 library(assertr)      # for verify() and assert()
-library(piercer)      # for all_classes()
+library(piercer)      # for all_classes(), file_details(), git_report()
 library(quarto)       # for quarto_version()
 ```
 
@@ -114,6 +114,7 @@ non-missing and valid.
 ```{r}
 #| label: read-spss-data-eligible
 
+file_details(here("scripts/extdata/JAMES ADAPT_UPDATE.sav"))
 ADAPT_Eligible <- read_spss(file = here("scripts/extdata/JAMES ADAPT_UPDATE.sav"),
                             user_na = TRUE) %>% 
   # Give error if number of records is not 87. 
@@ -175,6 +176,7 @@ unique, non-missing values, and Allocation values are all non-missing and valid.
 ```{r}
 #| label: read-spss-data-outcomes
 
+file_details(here("scripts/extdata/Cleaned_ADAPT_Data_Allocation_Included_07.08.24sav.sav"))
 ADAPT_Outcomes <- read_spss(file = here("scripts/extdata/Cleaned_ADAPT_Data_Allocation_Included_07.08.24sav.sav"),
                         user_na = TRUE) %>% 
   # Give error if any IDs or Allocation values are missing.
@@ -417,6 +419,7 @@ kable(ADAPT_CleanVars, format = "html", booktabs = TRUE, longtable = TRUE) %>%
 
 # Save the current working version of the clean data. 
 save(ADAPT_Clean_Data, file=here("data/ADAPT_Clean.RData"))
+file_details(here("data/ADAPT_Clean.RData"))
 ```
 
 The data file can be loaded into R by copying the following code chunk into a
@@ -451,6 +454,7 @@ We used [R](https://www.r-project.org/) as our main computing environment and
   files (`*.md`) to other formats, including LaTeX (`*.tex`) and HTML (`*.html`) 
   among others.
 
+## Versions
 This document was generated using the following computational environment and 
 dependencies: 
 
@@ -462,3 +466,12 @@ dependencies:
 devtools::session_info()
 ```
 
+## Git Details
+The current Git commit details and status are:
+
+``` {r}
+#| label: git-details
+#| echo: true
+
+git_report()
+```

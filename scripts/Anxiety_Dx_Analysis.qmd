@@ -93,7 +93,7 @@ library(janitor)      # for adorn_totals()
 library(broom)        # for tidy()
 library(emmeans)      # for emmeans(), contrast()
 library(mice)         # for mice(), pool(), etc. 
-library(piercer)      # for all_classes(), file_details()
+library(piercer)      # for all_classes(),  file_details(), git_report()
 library(quarto)       # for quarto_version()
 ```
 
@@ -2089,6 +2089,7 @@ We used [R](https://www.r-project.org/) as our main computing environment and
   files (`*.md`) to other formats, including LaTeX (`*.tex`) and HTML (`*.html`) 
   among others.
 
+## Versions
 This document was generated using the following computational environment and 
 dependencies: 
 
@@ -2098,5 +2099,15 @@ dependencies:
 
 # Get R and R package version numbers in use.
 devtools::session_info()
+```
+
+## Git Details
+The current Git commit details and status are:
+
+``` {r}
+#| label: git-details
+#| echo: true
+
+git_report()
 ```
 
